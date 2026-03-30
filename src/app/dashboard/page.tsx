@@ -180,9 +180,9 @@ export default function DashboardPage() {
       {/* ── Stats + Create Room ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr) 220px', gap: '16px', marginBottom: '48px' }}>
         {[
-          { label: 'Hosted Rooms',    value: createdRooms.length, icon: DoorOpen  },
-          { label: 'Joined Rooms',    value: joinedRooms.length,  icon: Users     },
-          { label: 'Total Rooms',     value: rooms.length,        icon: TerminalSquare },
+          { label: 'Hosted Rooms',    value: createdRooms.length, icon: DoorOpen, accent: 'Active'  },
+          { label: 'Joined Rooms',    value: joinedRooms.length,  icon: Users,      accent: 'Collaborating' },
+          { label: 'Total Rooms',     value: rooms.length,        icon: TerminalSquare, accent: 'Synced' },
         ].map((s, i) => (
           <div key={i} style={card}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>

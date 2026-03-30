@@ -33,6 +33,7 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
     }
     setUser({
       id,
+      type: sessionUser?._id ? "authenticated" : "anonymous",
       name: sessionUser?.name || id,
       image: sessionUser?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(sessionUser?.name || id)}&background=12141a&color=34d399`,
     });
@@ -54,7 +55,7 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
   // Initialize client
   useEffect(() => {
     if (!API_KEY || !user || !token) return;
-    const c = new StreamVideoClient({ apiKey: API_KEY, user, token });
+    const c = new StreamVideoClient({ apiKey: API_KEY, user: user as any, token });
     setClient(c);
     return () => { c.disconnectUser(); setClient(null); };
   }, [user, token]);

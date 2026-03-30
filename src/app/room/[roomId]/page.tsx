@@ -322,7 +322,7 @@ function NSOCParticipantBadge({ participant }: { participant: any }) {
                   onClick={async () => {
                     if (!call) return;
                     try {
-                      await call.removeMembers([participant.userId]);
+                      await call.kickUser({ user_id: participant.userId });
                       toast.success(`Removed ${participant.name || 'participant'} from call`);
                     } catch (e: any) {
                       toast.error("Failed to remove participant. Host permissions required.");
