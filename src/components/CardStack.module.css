@@ -1,0 +1,460 @@
+.container {
+  min-block-size: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui;
+  background: #030712;
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stack {
+  display: grid;
+  grid: [stack] / [stack];
+  perspective: 5000px;
+}
+
+.stack:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: lch(95 0 0);
+  transition: background 2s ease;
+  pointer-events: none;
+}
+
+.stack:hover:before,
+.stack:active:before {
+  background: lch(15 0 0);
+}
+
+.stack:hover .card,
+.stack:active .card {
+  --bg-opacity: 5%;
+  transition-duration: 2s;
+  transition-timing-function: var(--easeInOutCirc);
+  transform: rotateX(45deg) rotate(45deg) translateZ(var(--z-offset))
+    translateY(15vh) translateX(15vh);
+}
+
+.stack:hover .card:nth-child(1),
+.stack:active .card:nth-child(1) {
+  --z-offset: 60vh;
+}
+.stack:hover .card:nth-child(2),
+.stack:active .card:nth-child(2) {
+  --z-offset: 45vh;
+}
+.stack:hover .card:nth-child(3),
+.stack:active .card:nth-child(3) {
+  --z-offset: 30vh;
+}
+.stack:hover .card:nth-child(4),
+.stack:active .card:nth-child(4) {
+  --z-offset: 15vh;
+}
+.stack:hover .card:nth-child(5),
+.stack:active .card:nth-child(5) {
+  --z-offset: 0vh;
+}
+
+.stack:hover .card:nth-child(1)::after,
+.stack:active .card:nth-child(1)::after {
+  transition-delay: 1.5s;
+}
+.stack:hover .card:nth-child(2)::after,
+.stack:active .card:nth-child(2)::after {
+  transition-delay: 1.7s;
+}
+.stack:hover .card:nth-child(3)::after,
+.stack:active .card:nth-child(3)::after {
+  transition-delay: 1.9s;
+}
+.stack:hover .card:nth-child(4)::after,
+.stack:active .card:nth-child(4)::after {
+  transition-delay: 2.1s;
+}
+.stack:hover .card:nth-child(5)::after,
+.stack:active .card:nth-child(5)::after {
+  transition-delay: 2.3s;
+}
+
+.stack:hover .card::after,
+.stack:active .card::after {
+  opacity: 1;
+  transform: rotate(-45deg) rotateY(45deg) translateX(0px);
+}
+
+.stack:hover .card.content,
+.stack:active .card.content {
+  background: transparent;
+  color: white;
+  border-color: transparent;
+  transition: border-color 1s var(--easeInOutCirc) 0s,
+    background-color 1s var(--easeInOutCirc) 0s, color 1s var(--easeInOutCirc) 0s,
+    transform 2s var(--easeInOutCirc) 0s;
+}
+
+.stack:hover .card.padding,
+.stack:active .card.padding {
+  transition-delay: 0.1s;
+}
+
+.stack:hover .card.border,
+.stack:active .card.border {
+  transition-delay: 0.2s;
+}
+
+.stack:hover .card.background,
+.stack:active .card.background {
+  background: white;
+  transition: background-color 2s var(--easeInOutCirc) 0.3s,
+    transform 2s var(--easeInOutCirc) 0.2s;
+}
+
+.stack:hover .card.box-shadow,
+.stack:active .card.box-shadow {
+  transition-delay: 0.4s;
+  box-shadow: 0 -1px 25px rgba(0, 0, 0, 0.4),
+    0 7.6px 6.1px rgba(0, 0, 0, 0.051), 0 14.3px 11.5px rgba(0, 0, 0, 0.059),
+    0 25.5px 20.5px rgba(0, 0, 0, 0.07),
+    0 47.6px 38.4px rgba(0, 0, 0, 0.094), 0 114px 92px rgba(0, 0, 0, 0.19);
+}
+
+.card {
+  grid-area: stack;
+
+  --z-offset: 0;
+  --easeInOutCirc: cubic-bezier(0.85, 0, 0.15, 1);
+  --bg-opacity: 0%;
+
+  transition: transform 4s ease;
+
+  inline-size: 40vmin;
+  block-size: 40vmin;
+  box-sizing: border-box;
+  color: white;
+  background: lch(100 0 0 / 5%);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (orientation: landscape) {
+  .card {
+    inline-size: 40vh;
+    block-size: 40vh;
+  }
+}
+
+@media (max-width: 540px) {
+  .card {
+    inline-size: 60vw;
+    block-size: 60vw;
+  }
+}
+
+.card:nth-child(1) {
+  z-index: 3;
+}
+
+.card:nth-child(2) {
+  z-index: 2;
+}
+
+.card::after {
+  
+  position: absolute;
+  left: -60%;
+  top: 50%;
+  font-size: 1.25rem;
+  text-shadow: 0 1px 3px lch(0 0 0 / 75%);
+  white-space: nowrap;
+  padding: 1ch 2ch;
+  border-radius: 4ch;
+  opacity: 0;
+  transition: opacity 0.5s ease 0s, transform 0.5s ease;
+  transform: rotate(-45deg) rotateY(45deg) translateX(20px) translateY(-50%);
+  background: lch(0 0 0 / 70%);
+}
+
+@media (max-width: 540px) {
+  .card::after {
+    left: -20%;
+    top: 70%;
+  }
+}
+
+.card.content {
+  z-index: 5;
+  transition: border-color 4s ease, background-color 5s ease 2s,
+    color 4s ease 0s, transform 4s ease 0s;
+  padding: 5vmin;
+  font-size: max(1.5vmin, 0.8rem);
+  line-height: 1.5;
+  background: lch(100 0 0);
+  border: 5px solid hotpink;
+  color: black;
+}
+
+.card.content::after {
+  content: "Live Collaboration";
+}
+
+@media (max-width: 540px) {
+  .card.content::after {
+    left: -23%;
+  }
+}
+
+.card.padding {
+  background: transparent;
+  z-index: 4;
+  transition-delay: 0.1s;
+}
+
+.card.padding::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(
+    0% 0%,
+    0% 100%,
+    5vmin 100%,
+    5vmin 5vmin,
+    calc(100% - 5vmin) 5vmin,
+    calc(100% - 5vmin) calc(100% - 5vmin),
+    5vmin calc(100% - 5vmin),
+    5vmin 100%,
+    100% 100%,
+    100% 0%
+  );
+  background: repeating-linear-gradient(
+    -45deg,
+    cyan,
+    cyan 1px,
+    lch(100 0 0 / 5%) 1px,
+    lch(100 0 0 / 5%) 10px
+  );
+}
+
+.card.border {
+  z-index: 3;
+  background: transparent;
+  transition-delay: 0.2s;
+}
+
+.card.border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(
+    0% 0%,
+    0% 100%,
+    5px 100%,
+    5px 5px,
+    calc(100% - 5px) 5px,
+    calc(100% - 5px) calc(100% - 5px),
+    5px calc(100% - 5px),
+    5px 100%,
+    100% 100%,
+    100% 0%
+  );
+  background: linear-gradient(hotpink, hotpink);
+}
+
+.card.background {
+  z-index: 2;
+  transition: background-color 4s ease 0.3s, transform 4s ease 0.3s;
+}
+
+.card.box-shadow {
+  z-index: 1;
+  background: transparent;
+  transition: box-shadow 4s ease 0.4s, transform 4s ease 0.4s;
+
+  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.02),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.028), 0 12.5px 10px rgba(0, 0, 0, 0.035),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.042),
+    0 41.8px 33.4px rgba(0, 0, 0, 0.05), 0 100px 80px rgba(0, 0, 0, 0.07);
+}
+
+.card.box-shadow::after {
+  content: "Share & Invite";
+}
+
+@media (hover: hover) {
+  #mobile-prompt {
+    display: none;
+  }
+}
+
+@media (hover: none) {
+  #desktop-prompt {
+    display: none;
+  }
+}
+
+/* --- Animation and Label Positioning --- */
+
+.wrapper:hover .card {
+  --bg-opacity: 5%;
+  transition-duration: 2s;
+  transition-timing-function: var(--easeInOutCirc);
+  transform: rotateX(45deg) rotate(45deg) translateZ(var(--z-offset)) translateY(15vh) translateX(15vh);
+}
+
+.wrapper:hover .card:nth-child(1) { --z-offset: 60vh; }
+.wrapper:hover .card:nth-child(2) { --z-offset: 45vh; }
+.wrapper:hover .card:nth-child(3) { --z-offset: 30vh; }
+.wrapper:hover .card:nth-child(4) { --z-offset: 15vh; }
+.wrapper:hover .card:nth-child(5) { --z-offset: 0vh; }
+
+/* The list of labels, positioned absolutely to the side */
+.labelList {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%) rotate(-45deg);
+  transform-origin: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 0.5s 1s ease;
+  pointer-events: none;
+}
+
+.wrapper:hover .labelList {
+  opacity: 1;
+}
+
+.labelList li {
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+  font-size: 1.1rem;
+  white-space: nowrap;
+  margin-bottom: 5.5rem;
+}
+
+.centeredStackArea {
+ 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 70vh;
+  position: relative;
+}
+
+.connector {
+  position: absolute;
+  top: 50%;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.5s 1.2s;
+  z-index: 10;
+}
+
+.stack:hover .connector {
+  opacity: 1;
+}
+
+.connector.right {
+  left: 100%;
+  flex-direction: row;
+  transform: translateY(-50%) translateX(30px);
+}
+
+.connector.left {
+  right: 100%;
+  flex-direction: row-reverse;
+  transform: translateY(-50%) translateX(-30px);
+}
+
+.line {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, #38bdf8 60%, transparent 100%);
+  margin: 0 1rem;
+  border-radius: 2px;
+}
+
+.connector.left .line {
+  background: linear-gradient(270deg, #38bdf8 60%, transparent 100%);
+}
+
+.labelBlock {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: rgba(20,20,30,0.95);
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+  padding: 0.7rem 1.2rem;
+  min-width: 180px;
+}
+
+.featureTitle {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #38bdf8;
+  margin-right: 0.7rem;
+}
+
+.featureDesc {
+  font-size: 1rem;
+  color: #e5e7eb;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .centeredStackArea {
+    flex-direction: column;
+    gap: 2.5rem;
+    max-width: 100vw;
+  }
+  .labelBlock {
+    min-width: 120px;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.7rem;
+  }
+  .line {
+    width: 40px;
+  }
+}
+
+@media (max-width: 540px) {
+  .card {
+    inline-size: 60vw;
+    block-size: 60vw;
+  }
+  .labelBlock {
+    min-width: 80px;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+  }
+  .line {
+    width: 20px;
+  }
+}
+
+.topCardText {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #222;
+  font-weight: 500;
+} 

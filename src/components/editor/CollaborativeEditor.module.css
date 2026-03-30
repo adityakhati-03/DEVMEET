@@ -1,0 +1,123 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-radius: 1rem;
+  background-color: var(--color-card);
+  width: 100%;
+  height: 100%;
+  color: var(--color-card-foreground);
+  overflow: hidden;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.04);
+  padding: 0;
+}
+.dark .container {
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.2);
+}
+
+.editorHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem 0.5rem 1.5rem;
+  background: transparent;
+}
+
+.mainSplit {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+.leftPane {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .mainSplit {
+    flex-direction: column;
+  }
+  .leftPane {
+    border-right: none;
+    padding: 0.5rem;
+  }
+}
+
+.splitContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  gap: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.codePane {
+  flex: 1 1 100%;
+
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+.dark .codePane {
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.24);
+}
+
+.resizableHandle {
+  height: 10px;
+  background-color: var(--color-border);
+  cursor: row-resize;
+  border: none;
+  outline: none;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resizableHandle:hover {
+  background-color: var(--color-accent);
+}
+
+.outputPane {
+  background: var(--color-card);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  border: 1px solid var(--color-border);
+  padding: 1rem;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+.dark .outputPane {
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.24);
+}
+
+@media (max-width: 900px) {
+  .codePane, .outputPane {
+    border-radius: 10px;
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
+  }
+}
+
+.editorContainer {
+  position: relative;
+  flex-grow: 1;
+  min-height: 200px;
+  background: var(--color-background);
+  border-radius: 10px;
+  overflow: hidden;
+}

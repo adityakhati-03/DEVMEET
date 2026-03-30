@@ -1,0 +1,52 @@
+export const THEME = {
+  colors: {
+    accent: "hsl(222.2 47.4% 11.2%)",
+    background: "hsl(0 0% 100%)",
+    backgroundAlpha: "hsla(0, 0%, 100%, 0.5)",
+    border: "hsl(214.3 31.8% 91.4%)",
+    borderAlpha: "hsla(214.3, 31.8%, 91.4%, 0.5)",
+    primary: "hsl(222.2 47.4% 11.2%)",
+    secondary: "hsl(210 40% 96.1%)",
+    text: "hsl(222.2 47.4% 11.2%)",
+    textAlpha: "hsla(222.2, 47.4%, 11.2%, 0.5)",
+    textMuted: "hsl(215.4 16.3% 46.9%)",
+    error: "hsl(0 62.8% 30.6%)",
+  },
+  space: {
+    base: "1rem",
+    xs: "0.25rem",
+    sm: "0.5rem",
+    md: "1rem",
+    lg: "1.5rem",
+    xl: "2rem",
+  },
+  radii: {
+    base: "0.75rem",
+    xs: "0.25rem",
+    sm: "0.5rem",
+    md: "0.75rem",
+    lg: "1rem",
+    xl: "1.5rem",
+    round: "9999px",
+  },
+  fontSizes: {
+    base: "1rem",
+    xs: "0.75rem",
+    sm: "0.875rem",
+    md: "1rem",
+    lg: "1.125rem",
+    xl: "1.25rem",
+  },
+  zIndices: {
+    base: 0,
+    above: 1,
+    layer: 10,
+    overlay: 100,
+    modal: 1000,
+  },
+  shadows: {
+    sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+  }
+}; 

@@ -1,0 +1,422 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@stream-io/video-react-sdk/dist/css/styles.css";
+
+@custom-variant dark (&:is(.dark *));
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-discord-blurple: #5865F2;
+  --color-discord-dark: #313338;
+  --color-discord-darker: #2B2D31;
+  --color-discord-darkest: #1E1F22;
+  --color-discord-text: #DBDEE1;
+  --color-discord-muted: #949BA4;
+  --color-discord-green: #57F287;
+  
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  @keyframes marquee {
+  from {
+    transform: translateX(0);
+    }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+    }
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: #080a0f;
+  --foreground: #ffffff;
+  --card: #0d0f14;
+  --card-foreground: #ffffff;
+  --popover: #12141a;
+  --popover-foreground: #ffffff;
+  --primary: #34d399;
+  --primary-foreground: #080a0f;
+  --secondary: rgba(255,255,255,0.05);
+  --secondary-foreground: #ffffff;
+  --muted: rgba(255,255,255,0.05);
+  --muted-foreground: #78716c;
+  --accent: rgba(52,211,153,0.1);
+  --accent-foreground: #34d399;
+  --destructive: #ef4444;
+  --border: rgba(255,255,255,0.05);
+  --input: rgba(255,255,255,0.05);
+  --ring: #34d399;
+  --chart-1: #34d399;
+  --chart-2: #10b981;
+  --chart-3: #6ee7b7;
+  --chart-4: #a7f3d0;
+  --chart-5: #d1fae5;
+  --sidebar: #080a0f;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #34d399;
+  --sidebar-primary-foreground: #080a0f;
+  --sidebar-accent: rgba(52,211,153,0.1);
+  --sidebar-accent-foreground: #34d399;
+  --sidebar-border: rgba(255,255,255,0.05);
+  --sidebar-ring: #34d399;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-[#080a0f] text-white;
+  }
+}
+
+/* ── DevMeet theme tokens — switch via html.dark / html:not(.dark) ── */
+:root, html.dark {
+  --dm-bg:      #080a0f;
+  --dm-card:    #0d0f14;
+  --dm-input:   #080a0f;
+  --dm-surface: #12141a;
+  --dm-border:  rgba(255,255,255,0.05);
+  --dm-border2: rgba(255,255,255,0.04);
+  --dm-muted:   #78716c;
+  --dm-text:    #ffffff;
+}
+
+html.light, html:not(.dark) {
+  --dm-bg:      #f4f5f7;
+  --dm-card:    #ffffff;
+  --dm-input:   #f0f2f5;
+  --dm-surface: #e8eaed;
+  --dm-border:  rgba(0,0,0,0.07);
+  --dm-border2: rgba(0,0,0,0.05);
+  --dm-muted:   #6b7280;
+  --dm-text:    #0a0a0f;
+}
+
+body {
+
+  overflow-x: hidden;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+
+.animate-typing {
+  width: 0;
+  animation:
+    typing 2.5s steps(20, end) forwards,
+    blink 0.75s step-end infinite;
+}
+/* html {
+  scroll-behavior: smooth;
+} */
+   
+
+.my-theme {
+  /* Core Stream SDK Overrides */
+  --str-video__primary-color: #34d399;
+  --str-video__secondary-color: var(--dm-card);
+  --str-video__background-color: transparent;
+  --str-video__text-color: var(--dm-text);
+  --str-video__icon-color: var(--dm-text);
+  --str-video__disabled-color: var(--dm-muted);
+  
+  /* Borders & Radius */
+  --str-video__border-radius-sm: 8px;
+  --str-video__border-radius-md: 10px;
+  --str-video__border-radius-lg: 12px;
+  
+  /* Buttons & Controls */
+  --str-video__button-background-color: var(--dm-surface);
+  --str-video__button-background-color--hover: rgba(255,255,255,0.1);
+  --str-video__button-border-radius: 10px;
+  --str-video__button-padding: 10px;
+  --str-video__button-border-color: var(--dm-border);
+  
+  /* Overlays / Call Controls panel */
+  --str-video__call-controls-background: var(--dm-card);
+  --str-video__call-controls-border-color: var(--dm-border);
+  --str-video__call-controls-border-radius: 12px;
+  
+  /* Participant Grid */
+  --str-video__participant-border-radius: 10px;
+  --str-video__participant-background-color: #000;
+  
+  /* Connection Quality / Network */
+  --str-video__accent-info: #3b82f6;
+  --str-video__accent-error: #ef4444;
+  --str-video__accent-warning: #f59e0b;
+  --str-video__accent-success: #34d399;
+  
+  /* Fonts */
+  --str-video__font-family: 'Syne', sans-serif;
+  
+  /* Video specific variables to disable default dark theme clashes */
+  --str-video__popover-background: var(--dm-card);
+  --str-video__menu-background-color: var(--dm-card);
+  --str-video__menu-border-color: var(--dm-border);
+}
+
+html:not(.dark) .my-theme {
+  --str-video__button-background-color--hover: rgba(0,0,0,0.06);
+}
+/* body{
+  padding-top: 75px;
+} */
+
+/* Utility class to ensure content is always below the fixed header */
+.main-content-under-header {
+  padding-top: 64px;
+}
+
+.topbor {
+  padding-top: 64px;
+}
+
+/* Consistent horizontal page padding */
+.page-padding {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 768px) {
+  .page-padding {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+/* Vertical spacing between tab contents */
+.tab-content-spacing {
+  margin-bottom: 2rem;
+}
+
+/* Vertical padding between major sections and cards */
+.section-vertical-spacing {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+@media (min-width: 768px) {
+  .section-vertical-spacing {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+p:first-of-type {
+  margin-block-start: 0;
+}
+
+/* ── Sidebar hover-expand (guaranteed plain CSS — no Tailwind arbitrary classes) ── */
+.nsoc-sidebar:hover {
+  width: 220px !important;
+}
+
+.nsoc-sidebar:hover .sidebar-label {
+  opacity: 1 !important;
+}
+
+.nsoc-sidebar .sidebar-nav-item:hover {
+  color: white !important;
+  background: rgba(255,255,255,0.05) !important;
+}
+
+.nsoc-sidebar .sidebar-nav-item:hover svg {
+  color: white !important;
+}
+
+/* Room card hover */
+.room-card-hover:hover {
+  border-color: rgba(52,211,153,0.2) !important;
+  background: rgba(52,211,153,0.01) !important;
+}
+
+.nsoc-nav-link:hover {
+  color: white !important;
+  background: rgba(255,255,255,0.05) !important;
+}
+.nsoc-icon-btn:hover {
+  color: white !important;
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+.nsoc-cta-link:hover {
+  filter: brightness(1.1);
+}
+.nsoc-signout-btn:hover {
+  background: rgba(248,113,113,0.08) !important;
+}
+/* Hide mobile items on desktop */
+.nsoc-mobile-btn { display: none !important; }
+@media (max-width: 767px) {
+  .nsoc-mobile-btn { display: flex !important; }
+  .nsoc-header-nav { display: none !important; }
+}
+
+/* ── Light mode overrides ── */
+html:not(.dark) body {
+  background: #f7f8fa !important;
+  color: #0a0a0f !important;
+}
+html:not(.dark) .nsoc-sidebar {
+  background: #ffffff !important;
+  border-right-color: rgba(0,0,0,0.06) !important;
+}
+html:not(.dark) .nsoc-sidebar .sidebar-label {
+  color: #0a0a0f !important;
+}
+html:not(.dark) .nsoc-sidebar:hover {
+  box-shadow: 2px 0 20px rgba(0,0,0,0.08);
+}
+html:not(.dark) .nsoc-nav-link:hover {
+  color: #0a0a0f !important;
+  background: rgba(0,0,0,0.04) !important;
+}
+html:not(.dark) .nsoc-icon-btn:hover {
+  color: #0a0a0f !important;
+  background: rgba(0,0,0,0.06) !important;
+}
+
+/* ── Stream SDK Custom Menu Overrides ── */
+/* Syncing Participant Context Menus to NSOC Themes */
+.str-video__menu-container {
+  background: var(--dm-surface) !important;
+  border: 1px solid var(--dm-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+}
+.str-video__menu-item {
+  color: var(--dm-text) !important;
+  transition: all 0.2s;
+  border-radius: 6px !important;
+}
+.str-video__menu-item:hover {
+  background: var(--dm-card) !important;
+}
+/* Ensure the participant speaking indicator matches the brand */
+.str-video__participant-view--speaking {
+  box-shadow: 0 0 0 3px #34d399 !important;
+}
+/* Ensure details blocks (name) are readable always */
+.str-video__participant-details {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px) !important;
+  color: #fff !important; 
+  border-radius: 6px !important;
+}
+
