@@ -1,99 +1,136 @@
-## DEVMEET.
+# DevMeet 🚀
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**DevMeet** is a high-performance, real-time collaboration environment designed for modern developer teams. It combines professional-grade coding tools with seamless communication to bridge the gap between building and talking.
 
-## Features
+---
 
-- Real-time collaborative code editing
-- Built-in code execution with multiple language support (using Piston API)
-- Live video and chat capabilities
-- User authentication and room management
+## 🛠️ Exhaustive Tech Stack
 
-## Environment Variables
+### Framework & Language
+- **Next.js 15**: Leveraging the **App Router**, **Server Actions**, and **Turbopack** for mission-critical performance.
+- **TypeScript**: Full type safety across the entire stack, from API responses to state management.
 
-Create a `.env.local` file in the root directory with the following variables:
+### Real-Time & Collaboration
+- **Liveblocks**: Powering multiplayer presence, live cursors, and state synchronization.
+- **Yjs**: Ensuring conflict-free collaborative editing through Operational Transformation (OT) / CRDT logic via `@liveblocks/yjs`.
+- **CodeMirror 6**: A modular, extensible code editor with syntax highlighting for 10+ languages (JS, TS, Python, Java, SQL, etc.).
 
-```bash
-# NextAuth Configuration
-NEXTAUTH_SECRET=your_nextauth_secret_here
-NEXTAUTH_URL=http://localhost:3000
+### Communication Suite
+- **GetStream.io SDK**:
+  - **Stream Video/Audio**: Low-latency video rooms with host-only moderation and screen-sharing support.
+  - **Stream Chat**: Integrated real-time messaging with rich-text support inside rooms.
 
-# Database Configuration (if using MongoDB)
-MONGODB_URI=your_mongodb_connection_string_here
+### Authentication & Delivery
+- **NextAuth.js**: Robust session management with the **Credentials Provider**.
+- **bcryptjs**: Secure password hashing with industrial-standard salting.
+- **Resend**: Transactional email delivery for OTP verification and password recovery.
+- **React Email**: Beautifully designed, accessible email templates with `@react-email/components`.
 
-# Liveblocks Configuration
-LIVEBLOCKS_SECRET_KEY=your_liveblocks_secret_key_here
+### Database & Validation
+- **MongoDB**: The primary document store for users, rooms, and community content.
+- **Mongoose**: ODM tier with strictly typed schemas and population logic.
+- **Zod**: Runtime schema validation for API requests and form submissions.
+
+### UI / UX Architecture
+- **Tailwind CSS 4**: Modern, performance-first utility styling.
+- **Framer Motion & Motion**: Fluid micro-animations and layout transitions.
+- **Radix UI**: High-accessibility primitives (Dialogs, Tabs, Switches, Dropdowns).
+- **Sonner**: Premium, non-intrusive toast notifications.
+- **Lucide-React**: A consistent, industry-standard iconography set.
+- **Visual Micro-features**:
+  - **Cobe**: High-performance interactive 3D Globe on the landing page.
+  - **Tsparticles**: Dynamic background effects and interactive particle canvases.
+  - **Next-Themes**: Deep integration for system-level Dark/Light mode switching.
+
+---
+
+## 💎 Detailed Feature Audit
+
+### ⚡ Professional Collaboration
+- **Synced Code Editor**: Real-time multi-cursor support. See exactly where your teammates are typing.
+- **Integrated Video Rooms**: Jump on a call instantly without leaving your coding environment.
+- **Language Support**: Instant syntax highlighting and intelligent auto-completion for 10+ languages.
+- **Public & Private Access**: Create open rooms for community contribution or secure, invite-only rooms for sensitive projects.
+
+### 🛡️ Institutional-Grade Security
+- **Email Verification Pipeline**: Mandatory OTP verification during signup via **Resend** to prevent spam and bot accounts.
+- **Intelligent Rate Limiting**: Middleware-level protection against brute-force attacks and API abuse using a custom token-bucket implementation.
+- **Robust CSP**: Secure Content Security Policy (CSP) headers protecting against XSS and unauthorized script injection.
+- **OTP Expiration Logic**: 60-minute limited window for verification codes and password reset tokens.
+
+### 🏘️ Community Hub
+- **Dynamic Directories**: Searchable member directories with real-time stats.
+- **Event Management**: List and discover upcoming developer workshops and sessions.
+- **Discussions Feed**: Topic-based threads for asynchronous knowledge sharing.
+
+### 👤 Dashboard & Productivity
+- **Activity Timeline**: Visual history of your hosted and joined rooms.
+- **Room Bookmarking**: persistent "Saved Rooms" cache using **LocalStorage** for fast access.
+- **Profile Management**: Customizable display names and avatar generation using `ui-avatars`.
+
+---
+
+## 📁 Architecture Overview
+
+```text
+src/
+├── app/               # Next.js 15 App Router & API Endpoints
+│   ├── (auth)/        # Auth routes (Sign-in, Signup, Verify, Forgot/Reset)
+│   ├── api/           # Backend API layer (Room, Community, Presence)
+│   ├── community/     # Community module
+│   └── dashboard/     # User control center
+├── components/        # Shared UI components & Features
+├── helpers/           # Utility functions (Email dispatch, OTP generators)
+├── lib/               # Singleton instances (DB connect, Utils)
+├── models/            # Mongoose schemas (User, Room, Event, Activity)
+└── middleware.ts      # Auth guards, security headers, & rate limiting
 ```
 
-### Code Execution
+---
 
-This project uses the **Piston API** for code execution, which is:
-- **Free to use** with generous limits
-- **No API key required**
-- Supports 30+ programming languages
-- Fast and reliable execution
+## 🚀 Getting Started
 
-## Getting Started
+### Prerequisites
+- Node.js 18.x or higher
+- MongoDB instance (local or Atlas)
 
-First, install the dependencies:
-
+### 1. Installation
 ```bash
 npm install
-# or
-yarn install
-# or
-pnpm install
 ```
 
-Then, run the development server:
+### 2. Environment Variables (`.env.local`)
+Create a `.env.local` file in the root with the following keys:
+```env
+# Database
+MONGODB_URI=your_mongodb_connection_string
 
+# Auth
+NEXTAUTH_SECRET=generate_a_long_random_string
+NEXTAUTH_URL=http://localhost:3000
+
+# Email (Resend)
+RESEND_API_KEY=your_resend_api_key
+
+# Real-time (Liveblocks)
+LIVEBLOCKS_SECRET_KEY=your_liveblocks_key
+
+# Video (Stream SDK)
+NEXT_PUBLIC_STREAM_API_KEY=your_stream_key
+STREAM_API_SECRET=your_stream_secret
+```
+
+### 3. Development
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+Visit `http://localhost:3000` to start building.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-## API Routes
+## 📜 Future Roadmap
+- [ ] **Presence API**: Detailed "Who is Online" tracking across the app.
+- [ ] **Room Recordings**: Save video sessions directly to cloud storage.
+- [ ] **AI Pair Programmer**: Integrated LLM support within the collaborative editor.
 
-- `/api/languages` - Returns supported programming languages for Piston API
-- `/api/execute` - Executes code using Piston API
-- `/api/auth/[...nextauth]` - NextAuth authentication routes
-- `/api/room/*` - Room management endpoints
-
-## Supported Languages
-
-The code execution feature supports the following languages:
-- JavaScript (Node.js)
-- Python (2.7 & 3.8)
-- Java
-- C/C++
-- C#
-- Go
-- Rust
-- PHP
-- Ruby
-- TypeScript
-- And many more...
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-
+---
