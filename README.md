@@ -26,8 +26,9 @@ We recently achieved a **100% Zero-Error Production-Ready Build**, ensuring stri
 - **Stream Chat**: Integrated real-time messaging inside rooms.
 
 ### Authentication & Delivery
-- **NextAuth.js**: Robust session management with the **Credentials Provider**.
-- **bcryptjs**: Secure password hashing with industrial-standard salting (12 rounds).
+- **NextAuth.js**: Robust session management featuring **Google**, **GitHub**, and **Credentials** (Email/Password) Providers.
+- **Auto-Provisioning**: Seamless onboarding for OAuth users with auto-generated unique usernames and profile avatar syncing.
+- **bcryptjs**: Secure password hashing with industrial-standard salting (12 rounds) for local accounts.
 - **Resend**: Transactional email delivery for OTP verification.
 - **React Email**: Beautifully designed, accessible email templates via `@react-email/components`.
 
@@ -108,21 +109,29 @@ Create a `.env.local` file in the root directory with the following keys. Ensure
 
 ```env
 # Database
-MONGODB_URI=your_mongodb_connection_string
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?appName=<AppName>
 
 # NextAuth Configuration
 NEXTAUTH_SECRET=generate_a_long_random_string
 NEXTAUTH_URL=http://localhost:3000
 
-# Email Delivery (Resend)
-RESEND_API_KEY=your_resend_api_key
+# Liveblocks (Collaborative Editor)
+LIVEBLOCKS_SECRET_KEY=sk_prod_...
 
-# Real-time Collaboration (Liveblocks)
-LIVEBLOCKS_SECRET_KEY=your_liveblocks_key
-
-# Video API (Stream SDK)
+# Stream Video & Chat (Video Conferencing)
 NEXT_PUBLIC_STREAM_VIDEO_API_KEY=your_public_stream_key
+STREAM_VIDEO_API_KEY=your_stream_api_key
+STREAM_VIDEO_API_SECRET=your_secret_stream_key
 STREAM_API_SECRET=your_secret_stream_key
+
+# Email Delivery (Resend)
+RESEND_API_KEY=re_...
+
+# OAuth Providers (Google & GitHub)
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-your_secret_here
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
 ```
 
 ### 3. Development
