@@ -18,7 +18,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     await dbConnect();
-    const me = await User.findOne({ email: session.user.email }).lean() as any;
+    const me = await User.findOne({ email: session.user.email }).lean() as { _id: string };
 
     const friendship = await Friendship.findById(resolvedParams.id);
     if (!friendship) return NextResponse.json({ message: 'Request not found' }, { status: 404 });
@@ -44,7 +44,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
     const resolvedParams = await params;
     await dbConnect();
-    const me = await User.findOne({ email: session.user.email }).lean() as any;
+    const me = await User.findOne({ email: session.user.email }).lean() as { _id: string };
 
     const friendship = await Friendship.findById(resolvedParams.id);
     if (!friendship) return NextResponse.json({ message: 'Not found' }, { status: 404 });

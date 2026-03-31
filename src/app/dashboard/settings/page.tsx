@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { Bell, Eye, Globe, Lock, Trash2, ChevronDown, ChevronUp, Moon, Sun, Loader2 } from 'lucide-react';
+import { Trash2, Moon, Sun, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTheme } from 'next-themes';
 
@@ -81,7 +81,7 @@ export default function SettingsPage() {
               <p style={label}>{item.label}</p>
               <p style={sub}>{item.sub}</p>
             </div>
-            <Toggle checked={(notifs as any)[item.key]} onChange={v => { setNotifs(p => ({ ...p, [item.key]: v })); toast.success('Saved'); }} />
+            <Toggle checked={(notifs as Record<string, boolean>)[item.key]} onChange={v => { setNotifs(p => ({ ...p, [item.key]: v })); toast.success('Saved'); }} />
           </div>
         ))}
       </div>
@@ -98,7 +98,7 @@ export default function SettingsPage() {
               <p style={label}>{item.label}</p>
               <p style={sub}>{item.sub}</p>
             </div>
-            <Toggle checked={(privacy as any)[item.key]} onChange={v => { setPrivacy(p => ({ ...p, [item.key]: v })); toast.success('Saved'); }} />
+            <Toggle checked={(privacy as Record<string, boolean>)[item.key]} onChange={v => { setPrivacy(p => ({ ...p, [item.key]: v })); toast.success('Saved'); }} />
           </div>
         ))}
       </div>

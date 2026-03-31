@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       data: discussions,
       total: await Discussion.countDocuments({})
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to fetch discussions' },
       { status: 500 }
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       data: newDiscussion,
       message: 'Discussion created successfully'
     }, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to create discussion' },
       { status: 500 }

@@ -9,8 +9,9 @@ import { CollaborativeEditor } from "@/components/editor/CollaborativeEditor";
 import { BottomBar } from "@/components/roomsturuture/BottomBar";
 import { InCallChat } from "@/components/roomsturuture/InCallChat";
 import { ParticipantsPanel } from "@/components/roomsturuture/ParticipantsPanel";
-import { ParticipantView, useCallStateHooks, useCall, useParticipantViewContext } from "@stream-io/video-react-sdk";
+import { ParticipantView, useCallStateHooks, useCall, useParticipantViewContext, StreamVideoParticipant } from "@stream-io/video-react-sdk";
 import { Loading } from "@/components/Loading";
+import Image from 'next/image';
 import { toast } from "sonner";
 import { MoreVertical, MicOff, Pin, PinOff, CameraOff, VideoOff, UserMinus } from "lucide-react";
 
@@ -92,7 +93,7 @@ function useUnifiedParticipants() {
 }
 
 // Built-from-scratch grid replacement for PaginatedGridLayout to prevent opaque rendering collapses
-function ResilientVideoGrid({ participants }: { participants: any[] }) {
+function ResilientVideoGrid({ participants }: { participants: StreamVideoParticipant[] }) {
   if (participants.length === 0) {
     return (
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--dm-muted)" }}>
@@ -147,9 +148,9 @@ function VideoFallback() {
            display: "flex", alignItems: "center", justifyContent: "center", background: "var(--dm-surface)"
         }}>
           {participant.image ? (
-            <img src={participant.image} alt={participant.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <Image src={participant.image} alt={participant.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} width={90} height={90} unoptimized />
           ) : (
-            <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(participant.name)}&background=12141a&color=34d399`} alt={participant.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <Image src={`https://ui-avatars.com/api/?name=${encodeURIComponent(participant.name)}&background=12141a&color=34d399`} alt={participant.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} width={90} height={90} unoptimized />
           )}
         </div>
         <div style={{ 
@@ -171,7 +172,7 @@ function VideoFallback() {
 }
 
 // Custom Glassmorphic overlay taking complete aesthetic control over Participant Cells
-function NSOCParticipantBadge({ participant }: { participant: any }) {
+function NSOCParticipantBadge({ participant }: { participant: StreamVideoParticipant }) {
   const call = useCall();
   const { useMicrophoneState, useLocalParticipant } = useCallStateHooks();
   const { isMute: isLocalMicMute } = useMicrophoneState();
@@ -185,7 +186,7 @@ function NSOCParticipantBadge({ participant }: { participant: any }) {
   // Instantly sync local mic state without waiting for SFU broadcast
   const isMicOn = participant.isLocalParticipant 
      ? !isLocalMicMute 
-     : participant.publishedTracks.includes("audio");
+     : participant.publishedTracks.includes("audio" as unknown as typeof participant.publishedTracks[0]);
      
   const isPinned = participant.pin;
 
@@ -288,7 +289,7 @@ function NSOCParticipantBadge({ participant }: { participant: any }) {
                     try {
                       await call.muteUser(participant.userId, "audio");
                       toast.success(`Muted ${participant.name || 'participant'}`);
-                    } catch (e: any) {
+                    } catch {
                       toast.error("Failed to mute audio. Permissions missing?");
                     }
                     setIsMenuOpen(false);
@@ -305,7 +306,7 @@ function NSOCParticipantBadge({ participant }: { participant: any }) {
                     try {
                       await call.muteUser(participant.userId, "video");
                       toast.success(`Paused ${participant.name || 'participant'}'s video`);
-                    } catch (e: any) {
+                    } catch {
                       toast.error("Failed to pause video. Permissions missing?");
                     }
                     setIsMenuOpen(false);
@@ -324,7 +325,7 @@ function NSOCParticipantBadge({ participant }: { participant: any }) {
                     try {
                       await call.kickUser({ user_id: participant.userId });
                       toast.success(`Removed ${participant.name || 'participant'} from call`);
-                    } catch (e: any) {
+                    } catch {
                       toast.error("Failed to remove participant. Host permissions required.");
                     }
                     setIsMenuOpen(false);

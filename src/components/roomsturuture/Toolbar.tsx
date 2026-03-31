@@ -38,9 +38,9 @@ export function Toolbar({ yUndoManager, language, onLanguageChange }: Props) {
         }
         
         setLanguages(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching languages:", err);
-        setError(err.message || "Failed to load languages");
+        setError((err as Error).message || "Failed to load languages");
       } finally {
         setLoading(false);
       }

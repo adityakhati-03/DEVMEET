@@ -2,6 +2,7 @@
 
 import { useCallStateHooks, useCall } from "@stream-io/video-react-sdk";
 import { Users, Mic, MicOff, Video, VideoOff, Shield } from "lucide-react";
+import Image from 'next/image';
 
 export function ParticipantsPanel() {
   const { useParticipants, useLocalParticipant, useMicrophoneState, useCameraState } = useCallStateHooks();
@@ -33,11 +34,11 @@ export function ParticipantsPanel() {
         {participants.map((p) => {
           const isMicOn = p.isLocalParticipant 
             ? !isLocalMicMute 
-            : p.publishedTracks.includes("audio" as any);
+            : p.publishedTracks.includes("audio" as unknown as typeof p.publishedTracks[0]);
             
           const isCamOn = p.isLocalParticipant 
             ? !isLocalCamMute 
-            : p.publishedTracks.includes("video" as any);
+            : p.publishedTracks.includes("video" as unknown as typeof p.publishedTracks[0]);
 
           return (
             <div key={p.sessionId} style={{
@@ -45,10 +46,13 @@ export function ParticipantsPanel() {
               padding: "10px 12px", background: "var(--dm-card)", borderRadius: "8px", border: "1px solid var(--dm-border)"
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <img 
+                <Image 
                   src={p.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name || "U")}&background=E2E8F0&color=34d399`} 
                   alt={p.name} 
                   style={{ width: "32px", height: "32px", borderRadius: "16px", background: "var(--dm-bg)" }} 
+                  width={32}
+                  height={32}
+                  unoptimized
                 />
                 <span style={{ fontSize: "13px", color: "var(--dm-text)", fontWeight: 500, display: "flex", alignItems: "center", gap: "4px" }}>
                   {p.name || "Unknown"} {p.isLocalParticipant ? "(You)" : ""}

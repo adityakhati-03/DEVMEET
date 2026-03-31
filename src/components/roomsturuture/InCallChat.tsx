@@ -5,18 +5,19 @@ import { useStorage, useMutation, useSelf } from "@liveblocks/react/suspense";
 import { Send, MessageSquare } from "lucide-react";
 
 export function InCallChat() {
+  type Message = { id: string, text: string, sender: string, color?: string, timestamp: number };
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Connect to Liveblocks storage array
-  const messages = useStorage((root) => root.messages) as any[] || [];
+  const messages = useStorage((root) => root.messages) as Message[] || [];
   const userInfo = useSelf((me) => me.info);
 
   const handleSend = useMutation(({ storage }, e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || !userInfo) return;
     
-    const messagesList = storage.get("messages") as any[];
+    const messagesList = storage.get("messages") as Message[] | undefined;
     const newMessage = {
         id: Math.random().toString(36).substring(7),
         text: inputValue,

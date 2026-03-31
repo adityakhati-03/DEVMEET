@@ -37,8 +37,8 @@ export default function RunButtonWithOutput({ getCode, languageId }: Props) {
       } else {
         setOutput(data.output || "No output");
       }
-    } catch (error: any) {
-      setOutput(`Error: ${error.message || "Failed to execute code"}`);
+    } catch (error: unknown) {
+      setOutput(`Error: ${(error as Error).message || "Failed to execute code"}`);
     } finally {
       setLoading(false);
     }

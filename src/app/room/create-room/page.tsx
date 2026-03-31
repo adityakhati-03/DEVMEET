@@ -6,9 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import {
-  CopyIcon, Code2, Lock, Globe, Loader2, ArrowRight,
-  Users, Settings, Video, MessageSquare, UserPlus,
-  TerminalSquare, Zap, PlusCircle, DoorOpen
+  CopyIcon, Lock, Globe, Loader2, ArrowRight,
+  Settings, Video, MessageSquare, UserPlus,
+  PlusCircle, DoorOpen
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 
@@ -80,7 +80,7 @@ function CreateRoomContent() {
 
   useEffect(() => { setRoomId(nanoid(10)); }, []);
   useEffect(() => {
-    if (session?.user?.username) setUsername((session.user as any).username);
+    if (session?.user && 'username' in session.user) setUsername((session.user as { username: string }).username);
     else if (session?.user?.name) setUsername(session.user.name!);
   }, [session]);
 
@@ -104,8 +104,8 @@ function CreateRoomContent() {
       if (!res.ok) throw new Error(data.message || 'Room creation failed');
       setCreatedRoomId(roomId);
       toast.success('Room created!');
-    } catch (e: any) {
-      toast.error(e.message || 'Failed to create room');
+    } catch (e: unknown) {
+      toast.error((e as Error).message || 'Failed to create room');
     } finally { setIsLoading(false); }
   };
 
@@ -122,8 +122,8 @@ function CreateRoomContent() {
       if (!res.ok) throw new Error(data.message || 'Room not found');
       toast.success('Joining...');
       router.push(`/room/${joinRoomId}?username=${encodeURIComponent(username)}`);
-    } catch (e: any) {
-      toast.error(e.message || 'Failed to join');
+    } catch (e: unknown) {
+      toast.error((e as Error).message || 'Failed to join');
     } finally { setIsLoading(false); }
   };
 

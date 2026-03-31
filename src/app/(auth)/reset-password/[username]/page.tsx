@@ -139,7 +139,7 @@ export default function ResetPasswordPage() {
               </button>
 
               <p style={{ fontSize: "14px", color: "var(--dm-muted)", textAlign: "center", margin: 0 }}>
-                Didn't get the code?{" "}
+                Didn&apos;t get the code?{" "}
                 <Link href="/forgot-password" style={{ color: "#34d399", fontWeight: 700, textDecoration: "none" }}>
                   Send again
                 </Link>

@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       data: users,
       total: await User.countDocuments({})
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to fetch members' },
       { status: 500 }
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       data: newMember,
       message: 'Member profile created successfully'
     }, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to create member profile' },
       { status: 500 }

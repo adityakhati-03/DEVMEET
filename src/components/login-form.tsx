@@ -16,7 +16,7 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: "0.08em", marginBottom: "8px",
 };
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+export function LoginForm() {
   const [email, setEmail]               = useState("");
   const [password, setPassword]         = useState("");
   const [error, setError]               = useState("");
@@ -99,7 +99,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
             {/* Sign up link */}
             <p style={{ fontSize: "14px", color: "var(--dm-muted)", textAlign: "center", margin: 0 }}>
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/sign-up" style={{ color: "#34d399", fontWeight: 700, textDecoration: "none" }}>
                 Create one
               </Link>

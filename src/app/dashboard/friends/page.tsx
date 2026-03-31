@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { UserPlus, Users, Bell, Check, X, Trash2, Search, Loader2, UserCheck, Clock } from 'lucide-react';
+import { UserPlus, Users, Bell, Check, X, Trash2, Loader2, UserCheck, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 const card: React.CSSProperties = { background: 'var(--dm-card)', border: '1px solid var(--dm-border)', borderRadius: '12px', padding: '24px' };
@@ -162,7 +162,7 @@ export default function FriendsPage() {
               <div style={{ ...card, textAlign: 'center', padding: '48px' }}>
                 <Bell style={{ width: '36px', height: '36px', color: 'var(--dm-muted)', margin: '0 auto 12px' }} />
                 <p style={{ fontWeight: 700, fontSize: '15px', margin: '0 0 6px' }}>No pending requests</p>
-                <p style={{ color: 'var(--dm-muted)', fontSize: '13px' }}>When someone sends you a request, it'll appear here</p>
+                <p style={{ color: 'var(--dm-muted)', fontSize: '13px' }}>When someone sends you a request, it&apos;ll appear here</p>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

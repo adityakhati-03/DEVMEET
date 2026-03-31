@@ -1,54 +1,63 @@
 // lib/dbConnect.ts
-import mongoose from "mongoose"; 
+import mongoose, { Mongoose } from "mongoose";
 
-let isConnected = false;
+interface MongooseCache {
+  conn: Mongoose | null;
+  promise: Promise<Mongoose> | null;
+}
+
+declare global {
+  // declare mongoose
+  var mongoose: MongooseCache | undefined;
+}
+
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
 const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 second
+const RETRY_DELAY = 1500;
 
-const dbConnect = async (retryCount = 0) => {
-  if (isConnected) return;
+async function dbConnect(retryCount = 0): Promise<Mongoose> {
+  if (cached!.conn) {
+    return cached!.conn;
+  }
 
-  try {
-    const db = await mongoose.connect(process.env.MONGO_URI!, {
+  if (!cached!.promise) {
+    const opts = {
       dbName: "devmeet",
       maxPoolSize: 10,
-      minPoolSize: 5,
+      minPoolSize: 1,
       socketTimeoutMS: 45000,
-      connectTimeoutMS: 10000,
-      retryWrites: true,
-      serverSelectionTimeoutMS: 5000,
-      heartbeatFrequencyMS: 10000,
-    });
+      connectTimeoutMS: 15000,
+      serverSelectionTimeoutMS: 8000,
+      bufferCommands: false,
+    };
 
-    isConnected = !!db.connections[0].readyState;
-    
-    // Handle connection events
-    mongoose.connection.on('error', (err) => {
-      console.error('MongoDB connection error:', err);
-      isConnected = false;
+    cached!.promise = mongoose.connect(process.env.MONGO_URI!, opts).then((mongoose) => {
+      console.log("=> New MongoDB connection established");
+      return mongoose;
     });
+  }
 
-    mongoose.connection.on('disconnected', () => {
-      console.warn('MongoDB disconnected');
-      isConnected = false;
-    });
+  try {
+    cached!.conn = await cached!.promise;
+  } catch (e) {
+    cached!.promise = null;
+    console.error("=> MongoDB connection error:", e);
 
-    mongoose.connection.on('reconnected', () => {
-      console.info('MongoDB reconnected');
-      isConnected = true;
-    });
-
-  } catch (error) {
-    console.error('Database connection error:', error);
-    
     if (retryCount < MAX_RETRIES) {
-      console.log(`Retrying connection... Attempt ${retryCount + 1} of ${MAX_RETRIES}`);
+      console.log(`=> Retrying connection... Attempt ${retryCount + 1} of ${MAX_RETRIES}`);
       await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
       return dbConnect(retryCount + 1);
     }
-    
-    throw new Error('Failed to connect to database after multiple attempts');
+    throw e;
   }
-};
+
+  return cached!.conn;
+}
 
 export default dbConnect;
+

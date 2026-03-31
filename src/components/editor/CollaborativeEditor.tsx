@@ -46,7 +46,7 @@ export function CollaborativeEditor() {
         if (resp.ok) {
           const data = await resp.json();
           if (!data.error) {
-            const languageMap = data.reduce((map: Record<string, number>, lang: any) => {
+            const languageMap = data.reduce((map: Record<string, number>, lang: { name: string, id: number }) => {
               map[lang.name.toLowerCase().replace(/\s+/g, "")] = lang.id;
               return map;
             }, {});
@@ -108,6 +108,7 @@ export function CollaborativeEditor() {
       view.destroy();
       viewRef.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [element, room, userInfo, provider]);
 
   // Dispatch dynamic syntax highlighting update when language state changes
@@ -149,8 +150,8 @@ export function CollaborativeEditor() {
       });
       const data = await resp.json();
       setOutput(data.error ? `Error: ${data.error}${data.details ? "\n" + data.details : ""}` : (data.output || "No output"));
-    } catch (e: any) {
-      setOutput(`Error: ${e.message || "Failed to execute code"}`);
+    } catch (e: unknown) {
+      setOutput(`Error: ${(e as Error).message || "Failed to execute code"}`);
     } finally {
       setIsExecuting(false);
     }

@@ -1,6 +1,8 @@
 # DevMeet 🚀
 
-**DevMeet** is a high-performance, real-time collaboration environment designed for modern developer teams. It combines professional-grade coding tools with seamless communication to bridge the gap between building and talking.
+**DevMeet** is a high-performance, real-time collaboration environment designed for modern developer teams. It combines professional-grade coding tools with seamless video communication to bridge the gap between building and talking.
+
+We recently achieved a **100% Zero-Error Production-Ready Build**, ensuring strict TypeScript compliance, robust hook dependency management, and highly optimized serverless database connections.
 
 ---
 
@@ -8,65 +10,67 @@
 
 ### Framework & Language
 - **Next.js 15**: Leveraging the **App Router**, **Server Actions**, and **Turbopack** for mission-critical performance.
-- **TypeScript**: Full type safety across the entire stack, from API responses to state management.
+- **TypeScript**: Full strict-mode type safety across the entire stack, completely eliminating `any` types and ensuring robust prop interfaces.
 
 ### Real-Time & Collaboration
-- **Liveblocks**: Powering multiplayer presence, live cursors, and state synchronization.
+- **Liveblocks**: Powering multiplayer presence, awareness, live cursors, and state synchronization.
 - **Yjs**: Ensuring conflict-free collaborative editing through Operational Transformation (OT) / CRDT logic via `@liveblocks/yjs`.
-- **CodeMirror 6**: A modular, extensible code editor with syntax highlighting for 10+ languages (JS, TS, Python, Java, SQL, etc.).
+- **CodeMirror 6**: A modular, extensible code editor with dynamic syntax highlighting for 10+ languages.
+- **Piston API Integration**: Remote code execution environment supporting JS, TS, Python, Java, C++, and more with interactive stdin/stdout panels.
 
 ### Communication Suite
-- **GetStream.io SDK**:
-  - **Stream Video/Audio**: Low-latency video rooms with host-only moderation and screen-sharing support.
-  - **Stream Chat**: Integrated real-time messaging with rich-text support inside rooms.
+- **Stream Video SDK (@stream-io/video-react-sdk)**:
+  - Low-latency video rooms with host-only moderation controls (mute/pause/remove).
+  - Pre-join lobbies with hardware toggles and resilient video grids.
+  - Floating menu interfaces with glassmorphic UI elements and custom avatars.
+- **Stream Chat**: Integrated real-time messaging inside rooms.
 
 ### Authentication & Delivery
 - **NextAuth.js**: Robust session management with the **Credentials Provider**.
-- **bcryptjs**: Secure password hashing with industrial-standard salting.
-- **Resend**: Transactional email delivery for OTP verification and password recovery.
-- **React Email**: Beautifully designed, accessible email templates with `@react-email/components`.
+- **bcryptjs**: Secure password hashing with industrial-standard salting (12 rounds).
+- **Resend**: Transactional email delivery for OTP verification.
+- **React Email**: Beautifully designed, accessible email templates via `@react-email/components`.
 
 ### Database & Validation
-- **MongoDB**: The primary document store for users, rooms, and community content.
-- **Mongoose**: ODM tier with strictly typed schemas and population logic.
-- **Zod**: Runtime schema validation for API requests and form submissions.
+- **MongoDB & Mongoose**: Flexible document store utilizing **Global Connection Caching** to prevent connection pooling exhaustion in serverless environments (Vercel).
+- **Zod**: Runtime schema validation for API requests, form submissions, and authentication guards.
 
 ### UI / UX Architecture
 - **Tailwind CSS 4**: Modern, performance-first utility styling.
-- **Framer Motion & Motion**: Fluid micro-animations and layout transitions.
-- **Radix UI**: High-accessibility primitives (Dialogs, Tabs, Switches, Dropdowns).
-- **Sonner**: Premium, non-intrusive toast notifications.
-- **Lucide-React**: A consistent, industry-standard iconography set.
+- **Framer Motion**: Fluid micro-animations and layout transitions.
+- **Radix UI**: High-accessibility primitives for complex interactions.
+- **Sonner**: Premium, non-intrusive toast notification system.
+- **Lucide-React**: Clean and consistent iconography.
 - **Visual Micro-features**:
   - **Cobe**: High-performance interactive 3D Globe on the landing page.
-  - **Tsparticles**: Dynamic background effects and interactive particle canvases.
-  - **Next-Themes**: Deep integration for system-level Dark/Light mode switching.
+  - **MagicUI & Aceternity**: Premium background effects and interactive UI elements.
+  - **Next-Themes**: Deep integration for system-level Dark/Light mode switching directly synced to the code editor.
 
 ---
 
 ## 💎 Detailed Feature Audit
 
 ### ⚡ Professional Collaboration
-- **Synced Code Editor**: Real-time multi-cursor support. See exactly where your teammates are typing.
-- **Integrated Video Rooms**: Jump on a call instantly without leaving your coding environment.
-- **Language Support**: Instant syntax highlighting and intelligent auto-completion for 10+ languages.
+- **Synced Code Editor**: Real-time multi-cursor support. See exactly where your teammates are typing with custom-colored name tags.
+- **Integrated Video Rooms**: Jump on a call instantly alongside the coding environment without sacrificing screen real-estate. Featuring a unified rigid sidebar layout.
+- **Live Code Execution**: Compile and execute code against remote runners directly within the web app.
 - **Public & Private Access**: Create open rooms for community contribution or secure, invite-only rooms for sensitive projects.
 
-### 🛡️ Institutional-Grade Security
-- **Email Verification Pipeline**: Mandatory OTP verification during signup via **Resend** to prevent spam and bot accounts.
-- **Intelligent Rate Limiting**: Middleware-level protection against brute-force attacks and API abuse using a custom token-bucket implementation.
-- **Robust CSP**: Secure Content Security Policy (CSP) headers protecting against XSS and unauthorized script injection.
-- **OTP Expiration Logic**: 60-minute limited window for verification codes and password reset tokens.
-
-### 🏘️ Community Hub
+### 👥 Social & Community Hub
+- **Friend System**: Send, receive, and manage friend requests via email or unique auto-generated usernames.
 - **Dynamic Directories**: Searchable member directories with real-time stats.
 - **Event Management**: List and discover upcoming developer workshops and sessions.
-- **Discussions Feed**: Topic-based threads for asynchronous knowledge sharing.
+
+### 🛡️ Institutional-Grade Security & Stability
+- **Zero-Error Architecture**: Conforms to the highest ESLint and Next.js compilation standards, guaranteeing a silent, bug-free build process.
+- **Email Verification Pipeline**: Mandatory OTP verification during signup via **Resend** to prevent spam and bot accounts.
+- **Intelligent Rate Limiting**: Protection against brute-force attacks and API abuse.
+- **Robust CSP**: Secure Content Security Policy (CSP) headers protecting against XSS and unauthorized script injection.
 
 ### 👤 Dashboard & Productivity
 - **Activity Timeline**: Visual history of your hosted and joined rooms.
-- **Room Bookmarking**: persistent "Saved Rooms" cache using **LocalStorage** for fast access.
-- **Profile Management**: Customizable display names and avatar generation using `ui-avatars`.
+- **Room Management**: Persisted storage of historical rooms and creator-only deletion policies.
+- **Profile Generation**: Customizable display names and intelligent automatic avatar generation using `ui-avatars`.
 
 ---
 
@@ -75,15 +79,15 @@
 ```text
 src/
 ├── app/               # Next.js 15 App Router & API Endpoints
-│   ├── (auth)/        # Auth routes (Sign-in, Signup, Verify, Forgot/Reset)
-│   ├── api/           # Backend API layer (Room, Community, Presence)
-│   ├── community/     # Community module
-│   └── dashboard/     # User control center
-├── components/        # Shared UI components & Features
+│   ├── (auth)/        # Auth routes (Sign-in, Signup, Verify)
+│   ├── api/           # Backend API layer (Room, Community, Friends, Code Execution)
+│   ├── dashboard/     # User control center
+│   └── room/          # Dynamic collaboration environment
+├── components/        # Shared UI components (Editor, Video Call, Layouts)
 ├── helpers/           # Utility functions (Email dispatch, OTP generators)
-├── lib/               # Singleton instances (DB connect, Utils)
-├── models/            # Mongoose schemas (User, Room, Event, Activity)
-└── middleware.ts      # Auth guards, security headers, & rate limiting
+├── lib/               # Singleton instances (Cached DB Connect, Utils)
+├── models/            # Mongoose schemas (User, Room, Friendship, Event)
+└── middleware.ts      # Auth guards & security headers
 ```
 
 ---
@@ -92,7 +96,7 @@ src/
 
 ### Prerequisites
 - Node.js 18.x or higher
-- MongoDB instance (local or Atlas)
+- MongoDB cluster (Atlas) or local instance
 
 ### 1. Installation
 ```bash
@@ -100,24 +104,25 @@ npm install
 ```
 
 ### 2. Environment Variables (`.env.local`)
-Create a `.env.local` file in the root with the following keys:
+Create a `.env.local` file in the root directory with the following keys. Ensure you do not commit this file to version control.
+
 ```env
 # Database
 MONGODB_URI=your_mongodb_connection_string
 
-# Auth
+# NextAuth Configuration
 NEXTAUTH_SECRET=generate_a_long_random_string
 NEXTAUTH_URL=http://localhost:3000
 
-# Email (Resend)
+# Email Delivery (Resend)
 RESEND_API_KEY=your_resend_api_key
 
-# Real-time (Liveblocks)
+# Real-time Collaboration (Liveblocks)
 LIVEBLOCKS_SECRET_KEY=your_liveblocks_key
 
-# Video (Stream SDK)
-NEXT_PUBLIC_STREAM_API_KEY=your_stream_key
-STREAM_API_SECRET=your_stream_secret
+# Video API (Stream SDK)
+NEXT_PUBLIC_STREAM_VIDEO_API_KEY=your_public_stream_key
+STREAM_API_SECRET=your_secret_stream_key
 ```
 
 ### 3. Development
@@ -126,11 +131,16 @@ npm run dev
 ```
 Visit `http://localhost:3000` to start building.
 
+### 4. Production Build
+To verify production readiness of your local environment:
+```bash
+npm run build
+npm run start
+```
+
 ---
 
 ## 📜 Future Roadmap
-- [ ] **Presence API**: Detailed "Who is Online" tracking across the app.
+- [ ] **AI Pair Programmer**: Integrated LLM support within the collaborative editor to auto-complete logic and debug issues.
 - [ ] **Room Recordings**: Save video sessions directly to cloud storage.
-- [ ] **AI Pair Programmer**: Integrated LLM support within the collaborative editor.
-
----
+- [ ] **Advanced Organization Teams**: Role-based access control and organizational hierarchies.

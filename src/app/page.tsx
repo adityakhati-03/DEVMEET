@@ -4,8 +4,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import {
-  Zap, Terminal, Users, Globe, Lock, Play,
-  ArrowRight, Code2, Video, MessageSquare, CheckCircle
+  Zap, Terminal, Users, Globe, Play,
+  ArrowRight, Video, MessageSquare, CheckCircle
 } from "lucide-react";
 
 const features = [

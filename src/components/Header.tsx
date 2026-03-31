@@ -18,7 +18,7 @@ const navLinks = [
 const Header = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   // Prevent hydration mismatch — theme is unknown on the server

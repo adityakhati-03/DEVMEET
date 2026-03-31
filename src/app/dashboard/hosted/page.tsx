@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { TerminalSquare, Clock, ArrowRight, PlusCircle, FolderOpen, Trash2, Loader2, Circle } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -16,19 +17,19 @@ export default function MyRoomsPage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const load = () => {
-    setLoading(true);
-    fetch('/api/room/user-rooms')
-      .then(r => r.json())
-      .then(d => {
-        const user = session?.user as any;
-        const all: Room[] = d.rooms || [];
-        setRooms(all.filter(r => r.createdBy?._id === user?._id));
-      })
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { if (session) load(); }, [session]);
+  useEffect(() => {
+    if (session) {
+      setLoading(true);
+      fetch('/api/room/user-rooms')
+        .then(r => r.json())
+        .then(d => {
+          const user = session?.user as { _id?: string };
+          const all: Room[] = d.rooms || [];
+          setRooms(all.filter(r => r.createdBy?._id === user?._id));
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [session]);
 
   const handleDelete = async (roomId: string) => {
     if (!confirm(`Delete room "${roomId}"? This cannot be undone.`)) return;
@@ -101,10 +102,13 @@ export default function MyRoomsPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ display: 'flex' }}>
                   {room.participants.slice(0, 5).map(p => (
-                    <img key={p._id}
+                    <Image key={p._id}
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&size=28&background=12141a&color=34d399`}
                       style={{ width: '28px', height: '28px', borderRadius: '50%', border: '2px solid var(--dm-card)', marginLeft: '-6px' }}
                       alt={p.name}
+                      width={28}
+                      height={28}
+                      unoptimized
                     />
                   ))}
                 </div>

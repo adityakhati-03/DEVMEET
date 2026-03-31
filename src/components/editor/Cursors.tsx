@@ -29,7 +29,7 @@ export function Cursors({ yProvider }: Props) {
     return () => {
       yProvider.awareness.off("change", setUsers);
     };
-  }, [yProvider]);
+  }, [yProvider, userInfo]);
 
   // Insert awareness info into cursors with styles
   const styleSheet = useMemo(() => {

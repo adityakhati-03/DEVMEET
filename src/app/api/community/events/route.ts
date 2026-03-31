@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const limit = searchParams.get('limit');
 
-    let query: Record<string, any> = {};
+    const query: Record<string, unknown> = {};
     if (category) {
       query.category = category;
     }
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       data: events,
       total: await Event.countDocuments(query)
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to fetch events' },
       { status: 500 }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       data: newEvent,
       message: 'Event created successfully'
     }, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to create event' },
       { status: 500 }

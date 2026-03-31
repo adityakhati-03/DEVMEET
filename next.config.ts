@@ -5,15 +5,20 @@ const isTurbopack = process.env.TURBOPACK === '1';
 
 const baseConfig: NextConfig = {
   images: {
-    domains: ['avatars.githubusercontent.com', 'randomuser.me'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+      { protocol: 'https', hostname: 'randomuser.me' },
+      { protocol: 'https', hostname: 'ui-avatars.com' },
+    ],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  outputFileTracingRoot: process.cwd(),
 };
+
+
 
 const nextConfig: NextConfig = !isTurbopack
   ? withBundleAnalyzer({ enabled: process.env.ANALYZE === 'true' })(baseConfig)
   : baseConfig;
 
 export default nextConfig;
+

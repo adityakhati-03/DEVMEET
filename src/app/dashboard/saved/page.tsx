@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { TerminalSquare, Clock, ArrowRight, Bookmark, Trash2, PlusCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -11,7 +10,6 @@ type Room = { _id: string; roomId: string; createdBy: Participant; participants:
 const card: React.CSSProperties = { background: 'var(--dm-card)', border: '1px solid var(--dm-border)', borderRadius: '12px', padding: '24px' };
 
 export default function SavedPage() {
-  const { data: session } = useSession();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [saved, setSaved]   = useState<string[]>([]);
   const [loading, setLoading] = useState(true);

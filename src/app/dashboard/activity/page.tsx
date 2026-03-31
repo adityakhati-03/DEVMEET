@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { DoorOpen, TerminalSquare, MessageSquare, PlusCircle, ArrowRight, Clock } from 'lucide-react';
+import { DoorOpen, TerminalSquare, PlusCircle, ArrowRight, Clock } from 'lucide-react';
 
 const card: React.CSSProperties = { background: 'var(--dm-card)', border: '1px solid var(--dm-border)', borderRadius: '12px', padding: '24px' };
 
@@ -17,7 +17,7 @@ export default function ActivityPage() {
     fetch('/api/room/user-rooms').then(r => r.json()).then(d => setRooms(d.rooms || [])).finally(() => setLoading(false));
   }, []);
 
-  const user = session?.user as any;
+  const user = session?.user as { _id?: string; name?: string };
   const createdRooms = rooms.filter(r => r.createdBy?._id === user?._id);
   const joinedRooms  = rooms.filter(r => r.createdBy?._id !== user?._id);
 

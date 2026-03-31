@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   StreamVideo, StreamVideoClient, StreamCall, StreamTheme,
-  PaginatedGridLayout, CallControls, User, CallingState, useCallStateHooks,
+  PaginatedGridLayout, CallControls, User, CallingState, useCallStateHooks, Call
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Video, Loader2, VideoOff, RefreshCw } from "lucide-react";
@@ -16,27 +16,28 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [client, setClient] = useState<StreamVideoClient | null>(null);
-  const [call, setCall] = useState<any>(null);
+  const [call, setCall] = useState<Call | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
 
   // Use real session user, fallback to localStorage anon id
   useEffect(() => {
-    const sessionUser = session?.user as any;
+    const sessionUser = session?.user as { _id?: string, id?: string, name?: string, image?: string } | undefined;
     let id = sessionUser?._id || sessionUser?.id;
     if (!id) {
-      id = window.localStorage.getItem("stream_user_id");
-      if (!id) {
+      const localId = window.localStorage.getItem("stream_user_id");
+      if (localId) {
+        id = localId;
+      } else {
         id = "anon_" + Math.random().toString(36).slice(2, 10);
         window.localStorage.setItem("stream_user_id", id);
       }
     }
     setUser({
       id,
-      type: sessionUser?._id ? "authenticated" : "anonymous",
       name: sessionUser?.name || id,
       image: sessionUser?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(sessionUser?.name || id)}&background=12141a&color=34d399`,
-    });
+    } as User);
   }, [session]);
 
   // Fetch Stream token
@@ -55,7 +56,8 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
   // Initialize client
   useEffect(() => {
     if (!API_KEY || !user || !token) return;
-    const c = new StreamVideoClient({ apiKey: API_KEY, user: user as any, token });
+    // @ts-expect-error Stream SDK has complex UserRequest overload types
+    const c = new StreamVideoClient({ apiKey: API_KEY, user, token });
     setClient(c);
     return () => { c.disconnectUser(); setClient(null); };
   }, [user, token]);
@@ -67,15 +69,16 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
       const callInstance = client.call("default", roomId);
       await callInstance.join({ create: true });
       setCall(callInstance);
-    } catch (e: any) {
-      if (e.name === "NotAllowedError" || e.message?.includes("Permission denied"))
+    } catch (e: unknown) {
+      const err = e as Error;
+      if (err.name === "NotAllowedError" || err.message?.includes("Permission denied"))
         setError("Camera/microphone access denied. Check browser permissions.");
-      else if (e.message?.includes("could not start video source"))
+      else if (err.message?.includes("could not start video source"))
         setError("Camera already in use by another app or tab.");
-      else if (e.message?.includes("Invalid API key") || e.message?.includes("api_key"))
+      else if (err.message?.includes("Invalid API key") || err.message?.includes("api_key"))
         setError("Stream SDK not configured. Add NEXT_PUBLIC_STREAM_VIDEO_API_KEY to .env.local.");
       else
-        setError(e.message || "Failed to join call.");
+        setError(err.message || "Failed to join call.");
     } finally { setIsConnecting(false); }
   };
 

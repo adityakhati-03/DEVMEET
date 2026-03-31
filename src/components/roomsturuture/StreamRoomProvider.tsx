@@ -3,7 +3,7 @@
 import { useEffect, useState, ReactNode } from "react";
 import {
   StreamVideo, StreamVideoClient, StreamCall, StreamTheme,
-  VideoPreview, useCallStateHooks, useCall
+  VideoPreview, useCallStateHooks, useCall, Call, User
 } from "@stream-io/video-react-sdk";
 import { useSession } from "next-auth/react";
 import { Video, Loader2, VideoOff, Mic, MicOff } from "lucide-react";
@@ -13,18 +13,20 @@ const API_KEY = process.env.NEXT_PUBLIC_STREAM_VIDEO_API_KEY!;
 
 export function StreamRoomProvider({ roomId, children }: { roomId: string, children: ReactNode }) {
   const { data: session } = useSession();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [client, setClient] = useState<StreamVideoClient | null>(null);
-  const [call, setCall] = useState<any>(null);
+  const [call, setCall] = useState<Call | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const sessionUser = session?.user as any;
+    const sessionUser = session?.user as { _id?: string, id?: string, name?: string, image?: string } | undefined;
     let id = sessionUser?._id || sessionUser?.id;
     if (!id) {
-      id = window.localStorage.getItem("stream_user_id");
-      if (!id) {
+      const localId = window.localStorage.getItem("stream_user_id");
+      if (localId) {
+        id = localId;
+      } else {
         id = "anon_" + Math.random().toString(36).slice(2, 10);
         window.localStorage.setItem("stream_user_id", id);
       }
@@ -33,7 +35,7 @@ export function StreamRoomProvider({ roomId, children }: { roomId: string, child
       id,
       name: sessionUser?.name || id,
       image: sessionUser?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(sessionUser?.name || id)}&background=12141a&color=34d399`,
-    });
+    } as User);
   }, [session]);
 
   useEffect(() => {
@@ -59,6 +61,7 @@ export function StreamRoomProvider({ roomId, children }: { roomId: string, child
   useEffect(() => {
     if (!API_KEY || !user || !token || client) return; // Prevent remount multi-instancing
     
+    // @ts-expect-error Stream SDK has complex UserRequest overload types
     const c = new StreamVideoClient({ apiKey: API_KEY, user, token });
     const callInstance = c.call("default", roomId);
     
@@ -68,6 +71,7 @@ export function StreamRoomProvider({ roomId, children }: { roomId: string, child
     return () => {
       // Allow Stream SDK garbage collector to handle dead connections instead of aggressively severing WebSockets.
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, user?.id, token, client]);
 
   const centerStyle: React.CSSProperties = {
@@ -121,13 +125,13 @@ function PreJoinLobby({ children }: { children: ReactNode }) {
     setIsJoining(true);
     try {
       // Pre-emptively disable hardware before joining to prevent "flash-on"
-      try { if (isMicMute) await call.microphone.disable(); } catch (e) {}
-      try { if (isCamMute) await call.camera.disable(); } catch (e) {}
+      try { if (isMicMute) await call.microphone.disable(); } catch {}
+      try { if (isCamMute) await call.camera.disable(); } catch {}
 
       await call.join({ create: true });
       
       setIsJoined(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to join call", err);
     } finally {
       setIsJoining(false);
@@ -217,12 +221,12 @@ function CallEventNotifier() {
   useEffect(() => {
     if (!call) return;
 
-    const handleParticipantJoined = (event: any) => {
+    const handleParticipantJoined = (event: { participant?: { user?: { name?: string } } }) => {
       const name = event.participant?.user?.name || "A participant";
       toast.success(`${name} joined the room`, { position: "bottom-left" });
     };
 
-    const handleParticipantLeft = (event: any) => {
+    const handleParticipantLeft = (event: { participant?: { user?: { name?: string } } }) => {
       const name = event.participant?.user?.name || "A participant";
       toast.info(`${name} left the room`, { position: "bottom-left" });
     };

@@ -108,7 +108,7 @@ export function SignUpForm() {
       } else {
         if (data.details) {
           const fe: Record<string, string> = {};
-          data.details.forEach((err: any) => { if (err.path?.[0]) fe[err.path[0]] = err.message; });
+          data.details.forEach((err: { path?: string[]; message?: string }) => { if (err.path?.[0] && err.message) fe[err.path[0]] = err.message; });
           setFieldErrors(fe);
           setError("Please fix the errors below.");
         } else {

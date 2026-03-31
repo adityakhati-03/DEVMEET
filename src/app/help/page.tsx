@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, HelpCircle, MessageSquare, Zap, Book, ExternalLink } from 'lucide-react';
+import { ChevronDown, ChevronUp, MessageSquare, Zap, Book } from 'lucide-react';
 
 const faqs = [
   {
@@ -149,7 +149,7 @@ export default function HelpPage() {
       <div style={{ ...card, padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(52,211,153,0.04)', borderColor: 'rgba(52,211,153,0.15)', marginBottom: 0 }}>
         <div>
           <p style={{ fontWeight: 700, fontSize: '15px', margin: 0 }}>Still need help?</p>
-          <p style={{ color: 'var(--dm-muted)', fontSize: '13px', margin: '4px 0 0' }}>Reach out and we'll get back to you.</p>
+          <p style={{ color: 'var(--dm-muted)', fontSize: '13px', margin: '4px 0 0' }}>Reach out and we&apos;ll get back to you.</p>
         </div>
         <a href="mailto:support@devmeet.app"
           style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px', borderRadius: '8px', background: '#34d399', color: '#080a0f', fontWeight: 700, fontSize: '14px', textDecoration: 'none' }}>

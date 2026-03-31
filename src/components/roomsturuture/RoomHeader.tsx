@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { Avatars } from "@/components/editor/Avatars";
 import { useState } from "react";
-import { Copy, Check, LogOut, Share2, Users, Terminal } from "lucide-react";
+import { Check, LogOut, Share2, Users, Terminal } from "lucide-react";
 
 export default function RoomHeader({ roomId }: { roomId: string }) {
   const [copied, setCopied] = useState(false);

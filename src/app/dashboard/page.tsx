@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { toast } from 'sonner';
 import {
-  PlusCircle, DoorOpen, Users, Activity,
-  Star, Clock, TerminalSquare, MessageSquare,
+  PlusCircle, DoorOpen, Users,
+  Star, Clock, TerminalSquare,
   Play, SearchCode, FolderOpen, ArrowRight,
-  Circle, Trash2, Loader2
+  Circle, Trash2
 } from 'lucide-react';
 
 type Participant = { _id: string; name: string; avatar?: string; };
@@ -61,7 +62,7 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const user         = (session?.user as any) || {};
+  const user         = (session?.user as { _id?: string; name?: string; email?: string }) || {};
   const createdRooms = rooms.filter(r => r.createdBy?._id === user._id);
   const joinedRooms  = rooms.filter(r => r.createdBy?._id !== user._id);
 
@@ -124,10 +125,13 @@ export default function DashboardPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div style={{ display: 'flex' }}>
           {room.participants.slice(0, 4).map(p => (
-            <img key={p._id}
+            <Image key={p._id}
               src={`https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&size=32&background=12141a&color=34d399`}
               style={{ width: '30px', height: '30px', borderRadius: '50%', border: '2px solid #0d0f14', marginLeft: '-6px' }}
               alt={p.name}
+              width={30}
+              height={30}
+              unoptimized
             />
           ))}
         </div>
@@ -229,7 +233,7 @@ export default function DashboardPage() {
                     <SearchCode style={{ width: '18px', height: '18px', color: 'white' }} />
                   </div>
                   <h3 style={{ fontWeight: 700, color: 'white', fontSize: '15px', margin: '0 0 6px' }}>Join via Room ID</h3>
-                  <p style={{ fontSize: '13px', color: '#78716c', margin: 0 }}>Jump into a colleague's room instantly.</p>
+                  <p style={{ fontSize: '13px', color: '#78716c', margin: 0 }}>Jump into a colleague&apos;s room instantly.</p>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <input

@@ -52,7 +52,7 @@ export default function VerifyAccountPage() {
             </div>
             <h1 style={{ fontSize: "24px", fontWeight: 800, color: "var(--dm-text)", margin: 0, textAlign: "center" }}>Check your inbox</h1>
             <p style={{ color: "var(--dm-muted)", fontSize: "14px", margin: "6px 0 0", fontWeight: 500, textAlign: "center", lineHeight: 1.5 }}>
-              We've sent a 6-digit verification code to the email associated with <strong style={{color: "var(--dm-text)"}}>@{username}</strong>.
+              We&apos;ve sent a 6-digit verification code to the email associated with <strong style={{color: "var(--dm-text)"}}>@{username}</strong>.
             </p>
           </div>
 

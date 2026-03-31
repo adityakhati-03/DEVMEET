@@ -2,7 +2,8 @@
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Mail, Calendar, Shield, Edit3, Loader2, CheckCircle } from 'lucide-react';
+import Image from 'next/image';
+import { Calendar, Shield, Edit3, Loader2, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const card: React.CSSProperties = { background: 'var(--dm-card)', border: '1px solid var(--dm-border)', borderRadius: '12px', padding: '28px' };
@@ -21,7 +22,7 @@ export default function ProfilePage() {
     if (session?.user?.name) setName(session.user.name);
     // get room count
     fetch('/api/room/user-rooms').then(r => r.json()).then(d => setRoomCount((d.rooms || []).length));
-  }, [session, status]);
+  }, [session, status, router]);
 
   const handleSave = async () => {
     if (!name.trim()) { toast.error('Name cannot be empty'); return; }
@@ -38,7 +39,7 @@ export default function ProfilePage() {
     </div>
   );
 
-  const user = session?.user as any;
+  const user = session?.user as { name?: string; email?: string; image?: string };
   const initials = (user?.name || 'U').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
@@ -54,7 +55,7 @@ export default function ProfilePage() {
       <div style={{ ...card, display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '20px' }}>
         <div style={{ width: '72px', height: '72px', flexShrink: 0, borderRadius: '50%', background: 'rgba(52,211,153,0.12)', border: '2px solid rgba(52,211,153,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 800, color: '#34d399' }}>
           {user?.image
-            ? <img src={user.image} style={{ width: '72px', height: '72px', borderRadius: '50%' }} alt="avatar" />
+            ? <Image src={user.image} style={{ width: '72px', height: '72px', borderRadius: '50%' }} alt="avatar" width={72} height={72} unoptimized />
             : initials}
         </div>
         <div style={{ flex: 1 }}>
