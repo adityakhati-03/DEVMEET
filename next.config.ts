@@ -9,6 +9,7 @@ const baseConfig: NextConfig = {
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
       { protocol: 'https', hostname: 'randomuser.me' },
       { protocol: 'https', hostname: 'ui-avatars.com' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
     ],
   },
   outputFileTracingRoot: process.cwd(),

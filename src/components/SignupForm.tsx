@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2, Zap } from "lucide-react";
+import { SocialLoginButtons } from "@/components/SocialLoginButtons";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", background: "var(--dm-input)", border: "1px solid var(--dm-border)",
@@ -173,6 +174,18 @@ export function SignUpForm() {
               </Link>
             </p>
           </form>
+
+          {/* Divider */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "20px 0 0" }}>
+            <div style={{ flex: 1, height: "1px", background: "var(--dm-border)" }} />
+            <span style={{ fontSize: "12px", color: "var(--dm-muted)", fontWeight: 600, whiteSpace: "nowrap" }}>OR</span>
+            <div style={{ flex: 1, height: "1px", background: "var(--dm-border)" }} />
+          </div>
+
+          {/* Google Sign-Up */}
+          <div style={{ marginTop: "16px" }}>
+            <SocialLoginButtons callbackUrl="/dashboard" />
+          </div>
         </div>
       </div>
     </div>
