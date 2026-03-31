@@ -70,13 +70,6 @@ export default function Page() {
         {/* Glow */}
         <div style={{ position: "absolute", top: "20%", left: "50%", transform: "translateX(-50%)", width: "600px", height: "400px", background: "rgba(52,211,153,0.06)", filter: "blur(100px)", borderRadius: "50%", pointerEvents: "none" }} />
 
-        {/* Badge */}
-        <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "6px 16px", borderRadius: "20px", background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)", marginBottom: "32px" }}>
-          <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#34d399", display: "inline-block", animation: "pulse 2s infinite" }} />
-          <span style={{ fontSize: "13px", fontWeight: 700, color: "#34d399", letterSpacing: "0.02em" }}>
-            DevMeet v2.0 is live
-          </span>
-        </div>
 
         {/* Headline */}
         <h1 style={{ fontSize: "clamp(40px, 7vw, 80px)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-2px", margin: "0 0 24px", maxWidth: "900px" }}>
