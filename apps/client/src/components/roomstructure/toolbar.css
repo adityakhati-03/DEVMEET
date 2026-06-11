@@ -1,0 +1,86 @@
+/* ── Toolbar scoped styles ── */
+
+.toolbar-root {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+/* ── Language selector wrapper ── */
+.toolbar-lang-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #0d0f14;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 7px;
+  height: 32px;
+  padding: 0 10px 0 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.toolbar-lang-wrap:focus-within {
+  border-color: rgba(52, 211, 153, 0.35);
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.1);
+}
+
+/* Coloured dot */
+.toolbar-lang-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: 8px;
+  transition: background 0.25s;
+}
+
+/* Custom select — hide native arrow */
+.toolbar-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e2e8f0;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Menlo', monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  padding-right: 18px; /* room for chevron */
+  line-height: 1;
+  letter-spacing: 0.01em;
+  /* options background */
+}
+
+.toolbar-select option {
+  background: #0d0f14;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.toolbar-select:hover {
+  color: #ffffff;
+}
+
+.toolbar-select:focus {
+  color: #34d399;
+}
+
+/* Chevron icon */
+.toolbar-chevron {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+  transition: color 0.2s;
+}
+
+.toolbar-lang-wrap:focus-within .toolbar-chevron {
+  color: #34d399;
+}

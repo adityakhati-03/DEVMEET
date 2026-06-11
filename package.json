@@ -1,0 +1,24 @@
+{
+  "name": "devmeet-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "npm run dev --workspace=apps/client",
+    "dev:server": "npm run dev --workspace=apps/server",
+    "dev:worker": "npm run dev --workspace=apps/worker",
+    "build": "npm run build --workspace=packages/shared && npm run build --workspace=apps/server && npm run build --workspace=apps/worker && npm run build --workspace=apps/client",
+    "build:client": "npm run build --workspace=apps/client",
+    "build:server": "npm run build --workspace=apps/server",
+    "build:worker": "npm run build --workspace=apps/worker",
+    "typecheck": "npm run typecheck --workspace=packages/shared --if-present && npm run typecheck --workspace=apps/server --if-present && npm run typecheck --workspace=apps/worker --if-present && npm run typecheck --workspace=apps/client --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

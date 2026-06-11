@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - devmeet_net
+
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - CLIENT_URL=http://localhost
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - BCRYPT_SALT_ROUNDS=${BCRYPT_SALT_ROUNDS:-12}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - STREAM_VIDEO_API_KEY=${STREAM_VIDEO_API_KEY}
+      - STREAM_VIDEO_API_SECRET=${STREAM_VIDEO_API_SECRET}
+      - REDIS_URL=redis://redis:6379
+      - RATE_LIMIT_ENABLED=true
+    depends_on:
+      - redis
+    networks:
+      - devmeet_net
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=${MONGODB_URI}
+      - REDIS_URL=redis://redis:6379
+      - MAX_CODE_SIZE_KB=100
+      - MAX_STDIN_SIZE_KB=100
+      - MAX_OUTPUT_SIZE_KB=100
+    volumes:
+      # Allows worker to spawn containers on the host Docker daemon
+      - /var/run/docker.sock:/var/run/docker.sock
+      # We mount /tmp so container working directories are shared
+      - /tmp:/tmp
+    depends_on:
+      - redis
+    networks:
+      - devmeet_net
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - devmeet_net
+
+networks:
+  devmeet_net:
+    driver: bridge
+
+volumes:
+  redis_data:
