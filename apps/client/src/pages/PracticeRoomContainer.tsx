@@ -12,25 +12,41 @@ export default function PracticeRoomContainer({ initialRoom }: PracticeRoomConta
   const [room, setRoom] = useState<IRoom>(initialRoom);
   const [problem, setProblem] = useState<IProblem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSandbox, setIsSandbox] = useState(false);
+
+  const fetchFullData = async () => {
+    try {
+      const data = await practiceService.getPracticeRoom(room.roomId);
+      setRoom(data.room);
+      if (data.problem) {
+        setProblem(data.problem as IProblem);
+      }
+    } catch (err) {
+      console.error('Failed to load practice room details', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchFullData = async () => {
-      try {
-        const data = await practiceService.getPracticeRoom(room.roomId);
-        setRoom(data.room);
-        if (data.problem) {
-          setProblem(data.problem as IProblem);
-        }
-      } catch (err) {
-        console.error('Failed to load practice room details', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchFullData();
   }, [room.roomId]);
 
+  // Listen for problem attachment from the AI Problem Builder
+  useEffect(() => {
+    const handleProblemUpdated = () => {
+      fetchFullData();
+    };
+    window.addEventListener('roomProblemUpdated', handleProblemUpdated);
+    return () => window.removeEventListener('roomProblemUpdated', handleProblemUpdated);
+  }, [room.roomId]);
+
   const handleSelectProblem = async (problemId: string) => {
+    if (problemId === 'blank') {
+      setIsSandbox(true);
+      return;
+    }
+
     try {
       const data = await practiceService.updatePracticeRoomProblem(room.roomId, problemId);
       setRoom(data.room);
@@ -48,10 +64,10 @@ export default function PracticeRoomContainer({ initialRoom }: PracticeRoomConta
     );
   }
 
-  if (!room.problemId || !problem) {
+  if ((!room.problemId || !problem) && !isSandbox) {
     return (
       <div style={{ height: '100vh', overflowY: 'auto', background: '#080a0f' }}>
-        <ProblemSelector onSelect={handleSelectProblem} />
+        <ProblemSelector room={room} onSelect={handleSelectProblem} />
       </div>
     );
   }

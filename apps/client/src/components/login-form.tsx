@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Loader2, Zap } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import DevMeetLogo from './DevMeetLogo';
 import { useAuth } from '../context/AuthContext';
+import OAuthButtons from './auth/OAuthButtons';
 import './auth.css';
 
 export default function LoginForm() {
@@ -38,7 +40,7 @@ export default function LoginForm() {
         {/* Logo / icon */}
         <div className="auth-header">
           <div className="auth-logo-wrap">
-            <Zap className="auth-logo-icon" size={22} strokeWidth={2} />
+            <DevMeetLogo size={32} />
           </div>
           <h1 className="auth-title">Welcome back</h1>
           <p className="auth-subtitle">Sign in to your DevMeet account</p>
@@ -46,7 +48,8 @@ export default function LoginForm() {
 
         {/* Card */}
         <div className="dm-glass auth-card">
-          <form onSubmit={handleSubmit} className="auth-form">
+          <OAuthButtons isLogin />
+          <form onSubmit={handleSubmit} className="auth-form" style={{ marginTop: '16px' }}>
             {/* Email / Username */}
             <div className="auth-field">
               <label className="dm-label" htmlFor="login-identifier">
@@ -123,17 +126,6 @@ export default function LoginForm() {
             </p>
           </form>
 
-          {/* Divider */}
-          <div className="auth-divider">
-            <div className="auth-divider-line" />
-            <span className="auth-divider-label">OR</span>
-            <div className="auth-divider-line" />
-          </div>
-
-          {/* Social — Phase 2 */}
-          <div className="auth-social-placeholder">
-            🔒 Social login (Google / GitHub) coming in Phase 2
-          </div>
         </div>
       </div>
     </div>

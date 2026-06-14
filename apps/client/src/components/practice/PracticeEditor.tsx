@@ -2,12 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import Editor, { useMonaco } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
-import { Play, ChevronDown, ChevronUp, Loader2, Terminal } from 'lucide-react';
-import { SUPPORTED_LANGUAGES } from '@devmeet/shared';
+import { Play, ChevronDown, ChevronUp, Loader2, Terminal, Bot } from 'lucide-react';
+import { SUPPORTED_LANGUAGES, type IRoom } from '@devmeet/shared';
 import Toolbar from '../roomstructure/Toolbar';
 import styles from '../editor/CollaborativeEditor.module.css';
+import AIProblemBuilderButton from '../ai-problem-builder/AIProblemBuilderButton';
 
 interface PracticeEditorProps {
+  room: IRoom;
   code: string;
   onChangeCode: (val: string) => void;
   language: string;
@@ -22,6 +24,7 @@ interface PracticeEditorProps {
 }
 
 export default function PracticeEditor({
+  room,
   code,
   onChangeCode,
   language,
@@ -69,19 +72,26 @@ export default function PracticeEditor({
   return (
     <div className={styles.container}>
       <div className={styles.editorHeader}>
-        <div style={{ flex: 1 }}>
+        <button onClick={() => window.location.href = '/dashboard'} style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, marginRight: '16px', flexShrink: 0 }}>Exit Room</button>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
           <Toolbar language={language} onLanguageChange={onLanguageChange} />
+          <AIProblemBuilderButton 
+            roomId={room.roomId}
+            mode={room.mode}
+            interviewType={room.interviewType}
+            compact={true}
+          />
         </div>
         <button
           onClick={onRun}
           disabled={isExecuting}
           style={{
             display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '6px 18px', borderRadius: '7px',
+            padding: '6px 18px', borderRadius: '0px',
             background: isExecuting ? 'rgba(52,211,153,0.12)' : '#34d399',
             color: isExecuting ? '#34d399' : '#080a0f',
-            border: isExecuting ? '1px solid rgba(52,211,153,0.25)' : 'none',
-            fontWeight: 700, fontSize: '13px',
+            border: isExecuting ? '4px solid rgba(52,211,153,0.25)' : '4px solid transparent',
+            fontWeight: 800, fontSize: '13px', fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase',
             cursor: isExecuting ? 'not-allowed' : 'pointer',
             transition: 'all 150ms', flexShrink: 0,
           }}
@@ -138,7 +148,7 @@ export default function PracticeEditor({
                   </div>
                   <button
                     onClick={() => setShowOutput(v => !v)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '5px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', color: '#78716c', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '0px', background: 'rgba(255,255,255,0.04)', border: '2px solid var(--dm-border)', color: '#78716c', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase' }}
                   >
                     {showOutput
                       ? <><ChevronUp style={{ width: '12px', height: '12px' }} /> Input</>

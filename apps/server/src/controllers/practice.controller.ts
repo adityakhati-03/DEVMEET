@@ -72,12 +72,18 @@ export async function getPracticeRoom(req: Request, res: Response, next: NextFun
 
     const responseData: any = { room };
     if (room.problemId) {
+      console.log(`[Practice] Room ${roomId} has problemId: ${room.problemId}`);
       const problem = await problemService.getProblemById(room.problemId.toString());
       if (problem) {
+        console.log(`[Practice] Found problem: ${problem.title}`);
         const problemObj = problem.toObject();
         const safeTestCases = problemObj.testCases.map((tc: any) => tc.hidden ? { input: tc.input, hidden: true } : tc);
         responseData.problem = { ...problemObj, testCases: safeTestCases };
+      } else {
+        console.warn(`[Practice] Problem not found for id: ${room.problemId}`);
       }
+    } else {
+      console.log(`[Practice] Room ${roomId} has no problemId`);
     }
 
     res.status(200).json({ success: true, data: responseData });

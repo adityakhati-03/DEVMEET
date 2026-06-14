@@ -169,35 +169,35 @@ function PreJoinLobby({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--dm-surface)', height: '100%', width: '100%' }}>
-      <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--dm-text)', marginBottom: '24px' }}>Ready to join?</h2>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--dm-bg)', height: '100%', width: '100%' }}>
+      <h2 style={{ fontSize: '32px', fontWeight: 800, color: 'white', textTransform: 'uppercase', letterSpacing: '-0.02em', marginBottom: '32px' }}>Ready to join?</h2>
 
-      <div style={{ width: '480px', maxWidth: '90%', background: '#080a0f', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--dm-border)', position: 'relative', aspectRatio: '16/9', marginBottom: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: '540px', maxWidth: '90%', background: '#080a0f', borderRadius: '0px', overflow: 'hidden', border: '4px solid var(--dm-border)', boxShadow: '12px 12px 0 rgba(0,0,0,0.5)', position: 'relative', aspectRatio: '16/9', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {!isCamMute ? (
           <VideoPreview />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '32px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '0px', background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <VideoOff style={{ color: 'white', width: '32px', height: '32px' }} />
             </div>
-            <span style={{ color: 'white', fontSize: '14px' }}>Camera is off</span>
+            <span style={{ color: 'white', fontSize: '14px', fontWeight: 600, fontFamily: '"JetBrains Mono", monospace' }}>CAMERA OFF</span>
           </div>
         )}
 
-        <div style={{ position: 'absolute', bottom: '16px', display: 'flex', gap: '12px', zIndex: 10 }}>
+        <div style={{ position: 'absolute', bottom: '16px', display: 'flex', gap: '16px', zIndex: 10 }}>
           <button onClick={() => microphone.toggle()}
-            style={{ width: '48px', height: '48px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', background: isMicMute ? '#ef4444' : 'rgba(0,0,0,0.6)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(5px)' }}>
+            style={{ width: '48px', height: '48px', borderRadius: '0px', border: '2px solid white', background: isMicMute ? '#ef4444' : 'rgba(0,0,0,0.8)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '4px 4px 0 rgba(0,0,0,0.5)' }}>
             {isMicMute ? <MicOff size={20} /> : <Mic size={20} />}
           </button>
           <button onClick={() => camera.toggle()}
-            style={{ width: '48px', height: '48px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', background: isCamMute ? '#ef4444' : 'rgba(0,0,0,0.6)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(5px)' }}>
+            style={{ width: '48px', height: '48px', borderRadius: '0px', border: '2px solid white', background: isCamMute ? '#ef4444' : 'rgba(0,0,0,0.8)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '4px 4px 0 rgba(0,0,0,0.5)' }}>
             {isCamMute ? <VideoOff size={20} /> : <Video size={20} />}
           </button>
         </div>
       </div>
 
       <button onClick={handleJoin} disabled={isJoining}
-        style={{ padding: '12px 32px', borderRadius: '24px', background: '#34d399', color: '#080a0f', fontWeight: 700, fontSize: '15px', border: 'none', cursor: isJoining ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        style={{ padding: '16px 40px', borderRadius: '0px', background: 'var(--dm-accent)', color: '#000', fontWeight: 800, fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.05em', border: '2px solid var(--dm-accent)', cursor: isJoining ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: isJoining ? 'none' : '6px 6px 0 rgba(255,255,255,0.1)', transition: 'all 0.1s' }}>
         {isJoining ? <><Loader2 className="animate-spin w-4 h-4" /> Joining...</> : 'Join Room'}
       </button>
     </div>

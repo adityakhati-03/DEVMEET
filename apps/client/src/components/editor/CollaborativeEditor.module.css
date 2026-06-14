@@ -18,7 +18,7 @@
   padding: 0 1rem;
   height: 44px;
   background: #0d0f14;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 4px solid var(--dm-border);
 }
 
 /* ─── Body below header: takes remaining height ─── */
@@ -64,8 +64,8 @@
 /* Resize handle */
 .resizableHandle {
   flex-shrink: 0;
-  height: 4px;
-  background-color: rgba(255, 255, 255, 0.06);
+  height: 8px;
+  background-color: var(--dm-border);
   cursor: row-resize;
   transition: background 0.15s;
   position: relative;
@@ -91,7 +91,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 6px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 4px solid var(--dm-border);
   background: #0d0f14;
 }
 

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
+import axios from 'axios';
 import { z } from 'zod';
 import UserModel from '../models/User';
 import { signToken } from '../utils/jwt';
@@ -490,5 +491,126 @@ export async function resetPassword(req: Request, res: Response, next: NextFunct
     });
   } catch (error) {
     next(error);
+  }
+}
+
+// ─── OAuth Controllers ─────────────────────────────────────────────────────────
+
+async function handleSocialLogin(email: string, name: string, avatar: string, res: Response) {
+  let user = await UserModel.findOne({ email: email.toLowerCase() });
+
+  if (!user) {
+    const username = await generateUniqueUsername(name || email.split('@')[0]);
+    user = await UserModel.create({
+      name: name || username,
+      email: email.toLowerCase(),
+      username,
+      isVerified: true,
+      avatar,
+      isAcceptingMessages: true,
+      password: null, // Explicit null for social users
+    });
+  } else if (!user.isVerified) {
+    user.isVerified = true;
+    await user.save();
+  }
+
+  const token = signToken({
+    id: user._id.toString(),
+    email: user.email,
+    username: user.username,
+    name: user.name,
+    avatar: user.avatar,
+    bio: user.bio,
+    isVerified: user.isVerified,
+    isAcceptingMessages: user.isAcceptingMessages,
+    pinnedRooms: user.pinnedRooms,
+  });
+
+  setAuthCookie(res, token);
+  res.redirect(`${env.clientUrl}/dashboard`);
+}
+
+/**
+ * GET /api/auth/google
+ */
+export async function googleLogin(req: Request, res: Response): Promise<void> {
+  const redirectUri = `http://localhost:5000/api/auth/google/callback`;
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=email profile`;
+  res.redirect(url);
+}
+
+/**
+ * GET /api/auth/google/callback
+ */
+export async function googleCallback(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { code } = req.query;
+    if (!code) {
+      res.redirect(`${env.clientUrl}/login?error=GoogleAuthFailed`);
+      return;
+    }
+
+    const { data } = await axios.post('https://oauth2.googleapis.com/token', {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      code,
+      redirect_uri: `http://localhost:5000/api/auth/google/callback`,
+      grant_type: 'authorization_code',
+    });
+
+    const { data: profile } = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: { Authorization: `Bearer ${data.access_token}` },
+    });
+
+    await handleSocialLogin(profile.email, profile.name, profile.picture, res);
+  } catch (error) {
+    console.error('Google OAuth Error:', error);
+    res.redirect(`${env.clientUrl}/login?error=GoogleAuthFailed`);
+  }
+}
+
+/**
+ * GET /api/auth/github
+ */
+export async function githubLogin(req: Request, res: Response): Promise<void> {
+  const url = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=user:email`;
+  res.redirect(url);
+}
+
+/**
+ * GET /api/auth/github/callback
+ */
+export async function githubCallback(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { code } = req.query;
+    if (!code) {
+      res.redirect(`${env.clientUrl}/login?error=GithubAuthFailed`);
+      return;
+    }
+
+    const { data } = await axios.post('https://github.com/login/oauth/access_token', {
+      client_id: process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      code,
+    }, { headers: { Accept: 'application/json' } });
+
+    const { data: profile } = await axios.get('https://api.github.com/user', {
+      headers: { Authorization: `Bearer ${data.access_token}` },
+    });
+
+    let email = profile.email;
+    if (!email) {
+      const { data: emails } = await axios.get('https://api.github.com/user/emails', {
+        headers: { Authorization: `Bearer ${data.access_token}` },
+      });
+      const primaryEmail = emails.find((e: any) => e.primary);
+      email = primaryEmail ? primaryEmail.email : emails[0].email;
+    }
+
+    await handleSocialLogin(email, profile.name || profile.login, profile.avatar_url, res);
+  } catch (error) {
+    console.error('GitHub OAuth Error:', error);
+    res.redirect(`${env.clientUrl}/login?error=GithubAuthFailed`);
   }
 }

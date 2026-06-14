@@ -56,35 +56,52 @@ export class AIProblemService {
         throw new Error('Invalid generation method');
     }
 
-    let aiResponse: string;
-    try {
-      const provider = getAIProvider();
-      const systemPrompt = 'You are an expert technical interview problem creator. Output ONLY valid JSON.';
-      aiResponse = await provider.generateResponse({
-        systemPrompt,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        maxTokens: 8192,
-        responseFormat: 'json',
-      });
-    } catch (err: any) {
-      console.error('[AI Generation Error]:', err);
-      await AIProblemGeneration.create({
-        userId: user.id,
-        roomId: roomIdForAuth || null,
-        mode: payload.mode || null,
-        interviewType: payload.interviewType || null,
-        method: payload.method,
-        input: payload,
-        status: 'failed',
-        errorMessage: err.message || 'AI provider error',
-      });
-      throw Object.assign(new Error(`AI provider failed to generate problem: ${err.message || 'Unknown error'}`), { code: 'AI_ERROR' });
+    let aiResponse: string = '';
+    let problem: any = null;
+    let parseErrors: string[] = [];
+    const provider = getAIProvider();
+    const systemPrompt = 'You are an expert technical interview problem creator. Output ONLY valid JSON. No markdown, no comments, no extra text.';
+
+    // Try up to 2 times — sometimes the AI outputs malformed JSON on first attempt
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        aiResponse = await provider.generateResponse({
+          systemPrompt,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: attempt === 0 ? 0.7 : 0.3, // Lower temperature on retry for more structured output
+          maxTokens: 8192,
+          responseFormat: 'json',
+        });
+      } catch (err: any) {
+        console.error(`[AI Generation Error] Attempt ${attempt + 1}:`, err.message);
+        if (attempt === 1) {
+          await AIProblemGeneration.create({
+            userId: user.id,
+            roomId: roomIdForAuth || null,
+            mode: payload.mode || null,
+            interviewType: payload.interviewType || null,
+            method: payload.method,
+            input: payload,
+            status: 'failed',
+            errorMessage: err.message || 'AI provider error',
+          });
+          throw Object.assign(new Error(`AI provider failed to generate problem: ${err.message || 'Unknown error'}`), { code: 'AI_ERROR' });
+        }
+        continue;
+      }
+
+      const result = parseAIProblemJSON(aiResponse);
+      problem = result.problem;
+      parseErrors = result.errors;
+
+      if (problem && parseErrors.length === 0) {
+        break; // Success!
+      }
+
+      console.warn(`[AI Problem] Parse failed on attempt ${attempt + 1}: ${parseErrors.join(', ')}. ${attempt === 0 ? 'Retrying...' : 'Giving up.'}`);
     }
 
-    const { problem, errors } = parseAIProblemJSON(aiResponse);
-
-    if (!problem || errors.length > 0) {
+    if (!problem || parseErrors.length > 0) {
       await AIProblemGeneration.create({
         userId: user.id,
         roomId: roomIdForAuth || null,
@@ -93,9 +110,9 @@ export class AIProblemService {
         method: payload.method,
         input: payload,
         status: 'failed',
-        errorMessage: `Failed to parse AI problem: ${errors.join('; ')}`,
+        errorMessage: `Failed to parse AI problem: ${parseErrors.join('; ')}`,
       });
-      throw Object.assign(new Error(`AI returned malformed problem structure: ${errors.join(', ')}`), { code: 'AI_PARSE_ERROR' });
+      throw Object.assign(new Error(`AI returned malformed problem structure: ${parseErrors.join(', ')}`), { code: 'AI_PARSE_ERROR' });
     }
 
     // Set source metadata based on method
@@ -222,7 +239,7 @@ export class AIProblemService {
       }
     }
 
-    room.problemId = problem._id.toString();
+    room.problemId = problem._id;
     await room.save();
 
     return { success: true };

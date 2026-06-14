@@ -17,9 +17,9 @@ export default function InterviewControls({ status, isInterviewer, onStart, onEn
         onClick={onStart}
         style={{
           display: 'flex', alignItems: 'center', gap: '6px',
-          padding: '6px 14px', borderRadius: '6px',
-          background: '#34d399', color: '#080a0f',
-          border: 'none', fontWeight: 600, fontSize: '13px', cursor: 'pointer'
+          padding: '6px 14px', borderRadius: '0px',
+          background: 'var(--dm-accent)', color: '#080a0f',
+          border: '4px solid transparent', fontWeight: 800, fontSize: '13px', cursor: 'pointer', fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase'
         }}
       >
         <Play size={14} /> Start Interview
@@ -33,9 +33,9 @@ export default function InterviewControls({ status, isInterviewer, onStart, onEn
         onClick={onEnd}
         style={{
           display: 'flex', alignItems: 'center', gap: '6px',
-          padding: '6px 14px', borderRadius: '6px',
-          background: '#f87171', color: '#fff',
-          border: 'none', fontWeight: 600, fontSize: '13px', cursor: 'pointer'
+          padding: '6px 14px', borderRadius: '0px',
+          background: '#ef4444', color: '#fff',
+          border: '4px solid #ef4444', fontWeight: 800, fontSize: '13px', cursor: 'pointer', fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase'
         }}
       >
         <Square size={14} /> End Interview

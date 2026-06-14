@@ -35,9 +35,9 @@ export default function AttemptHistory({ attempts, onSelect, selectedId }: Attem
   );
 
   return (
-    <div style={{ height: '100%', overflowY: 'auto', borderLeft: '1px solid var(--dm-border)', background: 'var(--dm-bg)' }}>
-      <div style={{ padding: '16px', borderBottom: '1px solid var(--dm-border)', background: 'var(--dm-surface)' }}>
-        <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'white' }}>Attempt History</h3>
+    <div style={{ height: '100%', overflowY: 'auto', borderLeft: '4px solid var(--dm-border)', background: 'var(--dm-bg)' }}>
+      <div style={{ padding: '16px', borderBottom: '4px solid var(--dm-border)', background: 'var(--dm-surface)' }}>
+        <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: 'white', fontFamily: '"Space Grotesk", system-ui, sans-serif', textTransform: 'uppercase' }}>Attempt History</h3>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {attempts.map(attempt => (
@@ -46,7 +46,7 @@ export default function AttemptHistory({ attempts, onSelect, selectedId }: Attem
             onClick={() => onSelect(attempt)}
             style={{
               padding: '12px 16px',
-              borderBottom: '1px solid var(--dm-border)',
+              borderBottom: '4px solid var(--dm-border)',
               cursor: 'pointer',
               background: attempt._id === selectedId ? 'rgba(52,211,153,0.05)' : 'transparent',
               transition: 'background 150ms'

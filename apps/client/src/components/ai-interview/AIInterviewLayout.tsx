@@ -9,7 +9,7 @@ import { aiInterviewService } from '../../services/aiInterviewService';
 import { practiceService } from '../../services/practiceService';
 import { SUPPORTED_LANGUAGES } from '@devmeet/shared';
 import { toast } from 'sonner';
-import GenerateTestCasesButton from '../test-cases/GenerateTestCasesButton';
+import AIProblemBuilderButton from '../ai-problem-builder/AIProblemBuilderButton';
 
 interface AIInterviewLayoutProps {
   room: IRoom;
@@ -225,17 +225,7 @@ export default function AIInterviewLayout({ room, problem }: AIInterviewLayoutPr
               />
             </div>
             <div style={{ padding: '12px 16px', borderTop: '1px solid var(--dm-border)', flexShrink: 0 }}>
-              <GenerateTestCasesButton
-                problem={problem}
-                roomId={room.roomId}
-                mode="interview"
-                interviewType="ai"
-                isInterviewer={false}
-                canSave={false}
-                language={language}
-                onUseAsInput={(input) => { setInputValue(input); setShowOutput(false); }}
-                compact
-              />
+              <AIProblemBuilderButton roomId={room.roomId} mode="interview" interviewType="ai" compact />
             </div>
           </div>
         </Panel>

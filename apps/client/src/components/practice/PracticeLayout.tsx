@@ -8,16 +8,17 @@ import { practiceService } from '../../services/practiceService';
 import { SUPPORTED_LANGUAGES } from '@devmeet/shared';
 import { toast } from 'sonner';
 
+// No need for AIProblemBuilderButton here anymore since we moved it to PracticeEditor
 interface PracticeLayoutProps {
   room: IRoom;
-  problem: IProblem;
+  problem: IProblem | null;
   currentUser?: { id: string };
 }
 
 export default function PracticeLayout({ room, problem, currentUser }: PracticeLayoutProps) {
   const [attempts, setAttempts] = useState<IPracticeAttempt[]>([]);
   const [selectedAttemptId, setSelectedAttemptId] = useState<string>();
-  const [code, setCode] = useState(problem.starterCode?.javascript || '');
+  const [code, setCode] = useState(problem?.starterCode?.javascript || '// Write your code here\n');
   const [language, setLanguage] = useState('JavaScript');
   const [inputValue, setInputValue] = useState('');
   const [output, setOutput] = useState('');
@@ -91,9 +92,9 @@ export default function PracticeLayout({ room, problem, currentUser }: PracticeL
     setLanguage(lang);
     const l = lang.toLowerCase();
     let starter = '';
-    if (l.includes('javascript')) starter = problem.starterCode?.javascript || '';
-    else if (l.includes('python')) starter = problem.starterCode?.python || '';
-    else if (l.includes('c++')) starter = problem.starterCode?.cpp || '';
+    if (l.includes('javascript')) starter = problem?.starterCode?.javascript || '// Write your code here\n';
+    else if (l.includes('python')) starter = problem?.starterCode?.python || '# Write your code here\n';
+    else if (l.includes('c++')) starter = problem?.starterCode?.cpp || '// Write your code here\n';
     setCode(starter);
   };
 
@@ -156,20 +157,24 @@ export default function PracticeLayout({ room, problem, currentUser }: PracticeL
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', background: 'var(--dm-bg)', overflow: 'hidden' }}>
       <PanelGroup direction="horizontal">
-        <Panel defaultSize={35} minSize={20}>
-          <ProblemPanel
-            problem={problem}
-            room={room}
-            onUseAsInput={(input) => { setInputValue(input); setShowOutput(false); }}
-            canSave={currentUser?.id === (typeof room.createdBy === 'string' ? room.createdBy : (room.createdBy as any)?._id)}
-            language={language}
-          />
-        </Panel>
+        {problem && (
+          <>
+            <Panel defaultSize={35} minSize={20}>
+              <ProblemPanel
+                problem={problem}
+                room={room}
+                onUseAsInput={(input) => { setInputValue(input); setShowOutput(false); }}
+                canSave={currentUser?.id === (typeof room.createdBy === 'string' ? room.createdBy : (room.createdBy as any)?._id)}
+                language={language}
+              />
+            </Panel>
+            <PanelResizeHandle style={{ width: '8px', cursor: 'col-resize', background: 'var(--dm-border)', transition: 'background 0.2s' }} />
+          </>
+        )}
         
-        <PanelResizeHandle style={{ width: '8px', cursor: 'col-resize', background: 'var(--dm-border)', transition: 'background 0.2s' }} />
-        
-        <Panel defaultSize={45} minSize={30}>
+        <Panel defaultSize={problem ? 45 : 70} minSize={30}>
           <PracticeEditor
+            room={room}
             code={code}
             onChangeCode={setCode}
             language={language}

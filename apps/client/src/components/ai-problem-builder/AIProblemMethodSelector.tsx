@@ -1,4 +1,4 @@
-import { BookOpen, FileText, Code2, Sparkles } from 'lucide-react';
+import { BookOpen, FileText, Code2 } from 'lucide-react';
 import type { AIProblemGenerationMethod } from '@devmeet/shared';
 
 interface AIProblemMethodSelectorProps {
@@ -11,7 +11,7 @@ export default function AIProblemMethodSelector({ onSelect }: AIProblemMethodSel
       id: 'topic' as AIProblemGenerationMethod,
       title: 'Generate from Topic',
       description: 'Enter a topic like "Dynamic Programming" or "Two Pointers" and we\'ll build a unique problem.',
-      icon: <Sparkles size={24} color="#60a5fa" />,
+      icon: <span style={{ fontFamily: 'monospace', fontWeight: 800, fontSize: '18px', color: '#60a5fa' }}>[AI]</span>,
       color: 'rgba(59, 130, 246, 0.1)',
       borderColor: 'rgba(59, 130, 246, 0.3)',
     },
@@ -44,8 +44,8 @@ export default function AIProblemMethodSelector({ onSelect }: AIProblemMethodSel
   return (
     <div>
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#fff', margin: '0 0 8px 0' }}>How do you want to build this problem?</h2>
-        <p style={{ color: '#9ca3af', margin: 0, fontSize: '14px' }}>Choose a generation method below.</p>
+        <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#fff', margin: '0 0 8px 0', fontFamily: 'monospace', textTransform: 'uppercase' }}>How do you want to build this problem?</h2>
+        <p style={{ color: '#9ca3af', margin: 0, fontSize: '14px', fontFamily: 'monospace' }}>Choose a generation method below.</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -58,26 +58,29 @@ export default function AIProblemMethodSelector({ onSelect }: AIProblemMethodSel
               flexDirection: 'column',
               alignItems: 'flex-start',
               padding: '24px',
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: `1px solid ${m.borderColor}`,
-              borderRadius: '12px',
+              background: '#000',
+              border: `4px solid ${m.borderColor}`,
+              borderRadius: '0px',
               cursor: 'pointer',
               transition: 'all 0.2s',
               textAlign: 'left',
+              boxShadow: '4px 4px 0px 0px rgba(255, 255, 255, 0.2)',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = m.color;
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.transform = 'translate(-2px, -2px)';
+              e.currentTarget.style.boxShadow = `6px 6px 0px 0px ${m.borderColor}`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+              e.currentTarget.style.background = '#000';
               e.currentTarget.style.transform = 'none';
+              e.currentTarget.style.boxShadow = '4px 4px 0px 0px rgba(255, 255, 255, 0.2)';
             }}
           >
-            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '12px', marginBottom: '16px' }}>
+            <div style={{ background: 'rgba(0,0,0,0.5)', padding: '12px', borderRadius: '0px', marginBottom: '16px', border: '2px solid rgba(255,255,255,0.1)' }}>
               {m.icon}
             </div>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#fff', margin: '0 0 8px 0' }}>{m.title}</h3>
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', margin: '0 0 8px 0', fontFamily: 'monospace', textTransform: 'uppercase' }}>{m.title}</h3>
             <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0, lineHeight: 1.5 }}>{m.description}</p>
           </button>
         ))}

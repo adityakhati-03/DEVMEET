@@ -220,8 +220,8 @@ export default function NormalInterviewLayout({ room, currentUser }: NormalInter
   if (!session || (!isInterviewer && !isCandidate)) {
     return (
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--dm-surface)' }}>
-        <div style={{ width: '400px', background: '#080a0f', padding: '32px', borderRadius: '16px', border: '1px solid var(--dm-border)', textAlign: 'center' }}>
-          <h2 style={{ margin: '0 0 24px', color: 'white', fontSize: '20px', fontWeight: 700 }}>Join Interview</h2>
+        <div style={{ width: '400px', background: '#080a0f', padding: '32px', borderRadius: '0px', border: '4px solid var(--dm-border)', textAlign: 'center', boxShadow: '8px 8px 0px rgba(255,255,255,0.05)' }}>
+          <h2 style={{ margin: '0 0 24px', color: 'white', fontSize: '20px', fontWeight: 800, fontFamily: '"Space Grotesk", system-ui, sans-serif', textTransform: 'uppercase' }}>Join Interview</h2>
           <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '24px' }}>
             Please select your role for this interview session.
           </p>
@@ -229,14 +229,14 @@ export default function NormalInterviewLayout({ room, currentUser }: NormalInter
             <button 
               onClick={() => handleJoinSession('interviewer')}
               disabled={joiningSession || !!session?.interviewerId}
-              style={{ width: '100%', padding: '12px', background: session?.interviewerId ? '#374151' : '#34d399', color: session?.interviewerId ? '#9ca3af' : '#080a0f', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: (joiningSession || !!session?.interviewerId) ? 'not-allowed' : 'pointer' }}
+              style={{ width: '100%', padding: '12px', background: session?.interviewerId ? '#374151' : 'var(--dm-accent)', color: session?.interviewerId ? '#9ca3af' : '#080a0f', border: 'none', borderRadius: '0px', fontWeight: 800, fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase', cursor: (joiningSession || !!session?.interviewerId) ? 'not-allowed' : 'pointer' }}
             >
               {session?.interviewerId ? 'Interviewer Role Taken' : 'Join as Interviewer'}
             </button>
             <button 
               onClick={() => handleJoinSession('candidate')}
               disabled={joiningSession || !!session?.candidateId}
-              style={{ width: '100%', padding: '12px', background: session?.candidateId ? '#374151' : '#3b82f6', color: session?.candidateId ? '#9ca3af' : 'white', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: (joiningSession || !!session?.candidateId) ? 'not-allowed' : 'pointer' }}
+              style={{ width: '100%', padding: '12px', background: session?.candidateId ? '#374151' : '#3b82f6', color: session?.candidateId ? '#9ca3af' : 'white', border: 'none', borderRadius: '0px', fontWeight: 800, fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase', cursor: (joiningSession || !!session?.candidateId) ? 'not-allowed' : 'pointer' }}
             >
               {session?.candidateId ? 'Candidate Role Taken' : 'Join as Candidate'}
             </button>
@@ -250,9 +250,9 @@ export default function NormalInterviewLayout({ room, currentUser }: NormalInter
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       
       {/* Top Bar for Interview Controls & Timer */}
-      <div style={{ padding: '12px 24px', background: '#080a0f', borderBottom: '1px solid var(--dm-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ color: 'white', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button onClick={() => window.location.href = '/dashboard'} style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Exit Room</button>
+      <div style={{ padding: '12px 24px', background: '#080a0f', borderBottom: '4px solid var(--dm-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ color: 'white', fontWeight: 800, fontFamily: '"JetBrains Mono", monospace', display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button onClick={() => window.location.href = '/dashboard'} style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, marginRight: '16px', flexShrink: 0 }}>Exit Room</button>
           Normal Interview Mode {isInterviewer ? '(Interviewer)' : isCandidate ? '(Candidate)' : '(Viewer)'}
         </div>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
@@ -267,7 +267,7 @@ export default function NormalInterviewLayout({ room, currentUser }: NormalInter
               {(timerStatus === 'completed' || timerStatus === 'expired') && (
                 <button 
                   onClick={() => setShowReport(true)}
-                  style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)', color: '#34d399', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, padding: '4px 10px', borderRadius: '6px' }}
+                  style={{ background: 'var(--dm-accent)', color: 'black', border: 'none', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 800, fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase', padding: '4px 10px', borderRadius: '0px' }}
                 >
                   <FileText size={14} /> Report
                 </button>

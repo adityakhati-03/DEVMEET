@@ -202,21 +202,14 @@ export default function CollaborativeEditor({ roomId, currentUser, room }: Colla
       {/* ── Header bar ── */}
       <div className={styles.editorHeader}>
         <button onClick={() => window.location.href = '/dashboard'} style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, marginRight: '16px', flexShrink: 0 }}>Exit Room</button>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Toolbar language={language} onLanguageChange={setLanguage} />
+          <AIProblemBuilderButton
+            roomId={roomId}
+            mode="collaboration"
+            compact
+          />
         </div>
-        <GenerateTestCasesButton
-          roomId={roomId}
-          mode="collaboration"
-          language={language}
-          onUseAsInput={(input) => { setInputValue(input); setShowOutput(false); }}
-          compact
-        />
-        <AIProblemBuilderButton
-          roomId={roomId}
-          mode="collaboration"
-          compact
-        />
         <button
           onClick={handleExecute}
           disabled={isExecuting}

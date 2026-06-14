@@ -3,6 +3,7 @@ import type { IRoom, IProblem } from '@devmeet/shared';
 import AIInterviewLayout from '../components/ai-interview/AIInterviewLayout';
 import AIInterviewSetup from '../components/ai-interview/AIInterviewSetup';
 import { problemService } from '../services/problemService';
+import { aiInterviewService } from '../services/aiInterviewService';
 
 interface AIInterviewContainerProps {
   room: IRoom;
@@ -13,15 +14,20 @@ export default function AIInterviewContainer({ room }: AIInterviewContainerProps
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [needsSetup, setNeedsSetup] = useState(!room.problemId);
+  const [needsSetup, setNeedsSetup] = useState(!room.problemId || !room.interviewSessionId);
 
   const fetchProblem = async (probId: string) => {
     try {
+      if (!room.interviewSessionId) {
+        await aiInterviewService.createSession({ roomId: room.roomId, problemId: probId });
+        window.dispatchEvent(new CustomEvent('roomProblemUpdated'));
+        return;
+      }
       const data = await problemService.getProblem(probId);
       setProblem(data);
       setNeedsSetup(false);
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Failed to load problem');
+      setError(err.response?.data?.error?.message || 'Failed to load problem or create session');
     } finally {
       setLoading(false);
     }

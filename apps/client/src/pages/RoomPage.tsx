@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CollaborationProvider } from '../collaboration/CollaborationProvider';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +11,8 @@ import PracticeRoomContainer from './PracticeRoomContainer';
 import NormalInterviewLayout from '../components/interview/NormalInterviewLayout';
 import AIInterviewContainer from './AIInterviewContainer';
 import InterviewRoomPlaceholder from '../components/rooms/InterviewRoomPlaceholder';
+import RoomFullscreenButton from '../components/RoomFullscreenButton';
+import RoomCopyLinkButton from '../components/RoomCopyLinkButton';
 
 /**
  * RoomPage — adapted from src/app/room/[roomId]/page.tsx
@@ -35,42 +37,50 @@ export default function RoomPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchRoom = useCallback(async () => {
+    try {
+      let fetchedRoom: IRoom;
+      try {
+        fetchedRoom = await roomService.getRoom(roomId!);
+      } catch {
+        try {
+          fetchedRoom = await roomService.joinRoom(roomId!);
+        } catch {
+          setError('Room not found or you do not have access.');
+          setLoading(false);
+          return;
+        }
+      }
+      setRoom(fetchedRoom);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to load room');
+    } finally {
+      setLoading(false);
+    }
+  }, [roomId]);
+
   useEffect(() => {
     if (authLoading) return;
     if (!user) { navigate('/login'); return; }
     if (!roomId) { setError('No room ID provided'); setLoading(false); return; }
 
-    const fetchRoom = async () => {
-      try {
-        let fetchedRoom: IRoom;
-        try {
-          fetchedRoom = await roomService.getRoom(roomId);
-        } catch {
-          try {
-            fetchedRoom = await roomService.joinRoom(roomId);
-          } catch {
-            setError('Room not found or you do not have access.');
-            setLoading(false);
-            return;
-          }
-        }
-        setRoom(fetchedRoom);
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'Failed to load room');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRoom();
-  }, [roomId, user, authLoading, navigate]);
+  }, [roomId, user, authLoading, navigate, fetchRoom]);
+
+  useEffect(() => {
+    const handleRoomUpdate = () => {
+      fetchRoom();
+    };
+    window.addEventListener('roomProblemUpdated', handleRoomUpdate);
+    return () => window.removeEventListener('roomProblemUpdated', handleRoomUpdate);
+  }, [fetchRoom]);
 
   if (authLoading || loading) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#080a0f' }}>
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--dm-bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: '40px', height: '40px', border: '3px solid rgba(52,211,153,0.2)', borderTopColor: '#34d399', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
-          <p style={{ color: '#78716c', fontSize: '14px' }}>Loading room...</p>
+          <div style={{ width: '40px', height: '40px', border: '4px solid var(--dm-border)', borderTopColor: 'var(--dm-accent)', borderRadius: '0', animation: 'spin 0.5s linear infinite', margin: '0 auto 16px' }} />
+          <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', fontSize: '14px', textTransform: 'uppercase', fontWeight: 700 }}>Loading...</p>
         </div>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
@@ -79,9 +89,9 @@ export default function RoomPage() {
 
   if (error) {
     return (
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#080a0f', gap: '16px' }}>
-        <p style={{ color: '#f87171', fontSize: '16px' }}>{error}</p>
-        <button onClick={() => navigate('/dashboard')} style={{ padding: '10px 24px', background: '#34d399', color: '#080a0f', borderRadius: '8px', fontWeight: 700, border: 'none', cursor: 'pointer' }}>
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--dm-bg)', gap: '24px' }}>
+        <p style={{ color: '#ef4444', fontFamily: '"JetBrains Mono", monospace', fontSize: '16px', fontWeight: 700, textTransform: 'uppercase' }}>{error}</p>
+        <button onClick={() => navigate('/dashboard')} className="dm-btn-primary">
           Back to Dashboard
         </button>
       </div>
@@ -91,22 +101,75 @@ export default function RoomPage() {
   if (!room || !user) return null;
 
   if (room.mode === 'practice') {
-    return <PracticeRoomContainer initialRoom={room} />;
+    return (
+      <>
+        <RoomFullscreenButton />
+        <RoomCopyLinkButton roomId={roomId!} />
+        <PracticeRoomContainer initialRoom={room} />
+      </>
+    );
   }
 
   if (room.mode === 'interview') {
     if (room.interviewType === 'normal') {
       return (
-        <CollaborationProvider roomId={roomId!} token={null}>
-          <StreamRoomProvider
+        <>
+          <RoomFullscreenButton />
+          <RoomCopyLinkButton roomId={roomId!} />
+          <CollaborationProvider roomId={roomId!} token={null}>
+            <StreamRoomProvider
+              roomId={roomId!}
+              userId={user.id}
+              userName={user.name}
+              userAvatar={user.avatar ?? undefined}
+              getStreamToken={() => streamService.getStreamToken(roomId)}
+            >
+              <NormalInterviewLayout 
+                room={room}
+                currentUser={{
+                  id: user.id,
+                  name: user.name,
+                  username: user.username,
+                  avatar: user.avatar,
+                }}
+              />
+            </StreamRoomProvider>
+          </CollaborationProvider>
+        </>
+      );
+    }
+    if (room.interviewType === 'ai') {
+      return (
+        <>
+          <RoomFullscreenButton />
+          <RoomCopyLinkButton roomId={roomId!} />
+          <AIInterviewContainer room={room} />
+        </>
+      );
+    }
+    return (
+      <>
+        <RoomFullscreenButton />
+        <RoomCopyLinkButton roomId={roomId!} />
+        <InterviewRoomPlaceholder room={room} />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <RoomFullscreenButton />
+      <RoomCopyLinkButton roomId={roomId!} />
+      <CollaborationProvider roomId={roomId!} token={null}>
+        <StreamRoomProvider
             roomId={roomId!}
             userId={user.id}
             userName={user.name}
             userAvatar={user.avatar ?? undefined}
             getStreamToken={() => streamService.getStreamToken(roomId)}
           >
-            <NormalInterviewLayout 
-              room={room}
+            <CollaborativeEditor
+              roomId={roomId!}
               currentUser={{
                 id: user.id,
                 name: user.name,
@@ -114,35 +177,8 @@ export default function RoomPage() {
                 avatar: user.avatar,
               }}
             />
-          </StreamRoomProvider>
-        </CollaborationProvider>
-      );
-    }
-    if (room.interviewType === 'ai') {
-      return <AIInterviewContainer room={room} />;
-    }
-    return <InterviewRoomPlaceholder room={room} />;
-  }
-
-  return (
-    <CollaborationProvider roomId={roomId!} token={null}>
-      <StreamRoomProvider
-          roomId={roomId!}
-          userId={user.id}
-          userName={user.name}
-          userAvatar={user.avatar ?? undefined}
-          getStreamToken={() => streamService.getStreamToken(roomId)}
-        >
-          <CollaborativeEditor
-            roomId={roomId!}
-            currentUser={{
-              id: user.id,
-              name: user.name,
-              username: user.username,
-              avatar: user.avatar,
-            }}
-          />
-      </StreamRoomProvider>
-    </CollaborationProvider>
+        </StreamRoomProvider>
+      </CollaborationProvider>
+    </>
   );
 }

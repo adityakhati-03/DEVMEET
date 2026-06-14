@@ -144,11 +144,11 @@ export default function InterviewEditor({ roomId, currentUser, isExecuting, isSu
             disabled={isExecuting || isSubmitting}
             style={{
               display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '6px 18px', borderRadius: '7px',
+              padding: '6px 18px', borderRadius: '0px',
               background: isExecuting ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
               color: isExecuting ? '#fff' : '#e2e8f0',
-              border: '1px solid rgba(255,255,255,0.1)',
-              fontWeight: 600, fontSize: '13px',
+              border: '2px solid var(--dm-border)',
+              fontWeight: 800, fontSize: '13px', fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase',
               cursor: (isExecuting || isSubmitting) ? 'not-allowed' : 'pointer',
               transition: 'all 150ms', flexShrink: 0,
             }}
@@ -162,11 +162,11 @@ export default function InterviewEditor({ roomId, currentUser, isExecuting, isSu
             disabled={isExecuting || isSubmitting}
             style={{
               display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '6px 18px', borderRadius: '7px',
-              background: isSubmitting ? 'rgba(52,211,153,0.12)' : '#34d399',
+              padding: '6px 18px', borderRadius: '0px',
+              background: isSubmitting ? 'rgba(52,211,153,0.12)' : 'var(--dm-accent)',
               color: isSubmitting ? '#34d399' : '#080a0f',
-              border: isSubmitting ? '1px solid rgba(52,211,153,0.25)' : 'none',
-              fontWeight: 700, fontSize: '13px',
+              border: isSubmitting ? '4px solid rgba(52,211,153,0.25)' : '4px solid transparent',
+              fontWeight: 800, fontSize: '13px', fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase',
               cursor: (isExecuting || isSubmitting) ? 'not-allowed' : 'pointer',
               transition: 'all 150ms', flexShrink: 0,
             }}
@@ -220,7 +220,7 @@ export default function InterviewEditor({ roomId, currentUser, isExecuting, isSu
                   </div>
                   <button
                     onClick={() => setShowOutput(v => !v)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '5px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', color: '#78716c', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '0px', background: 'rgba(255,255,255,0.04)', border: '2px solid var(--dm-border)', color: '#78716c', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase' }}
                   >
                     {showOutput
                       ? <><ChevronUp style={{ width: '12px', height: '12px' }} /> Input</>

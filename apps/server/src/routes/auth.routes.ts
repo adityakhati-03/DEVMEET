@@ -7,6 +7,10 @@ import {
   verifyOtp,
   forgotPassword,
   resetPassword,
+  googleLogin,
+  googleCallback,
+  githubLogin,
+  githubCallback,
 } from '../controllers/auth.controller';
 import { requireAuth } from '../middlewares/auth.middleware';
 import { createRateLimitMiddleware } from '../middlewares/rateLimit.middleware';
@@ -26,6 +30,12 @@ router.post('/logout', logout);
 router.post('/verify-otp', otpVerifyLimiter, verifyOtp);
 router.post('/forgot-password', otpSendLimiter, forgotPassword);
 router.post('/reset-password', otpVerifyLimiter, resetPassword);
+
+// OAuth routes
+router.get('/google', googleLogin);
+router.get('/google/callback', googleCallback);
+router.get('/github', githubLogin);
+router.get('/github/callback', githubCallback);
 
 // Protected routes
 router.get('/me', requireAuth, me);

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, ArrowLeft, Save, Play, Loader2, Sparkles, CheckCircle } from 'lucide-react';
+import { X, ArrowLeft, Save, Play, Loader2, CheckCircle } from 'lucide-react';
 import { aiProblemService } from '../../services/aiProblemService';
 import type { AIProblemGenerationMethod, AIProblemBuilderResponse, ProblemDifficulty } from '@devmeet/shared';
 import AIProblemMethodSelector from './AIProblemMethodSelector';
@@ -73,7 +73,8 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
       setStep('preview');
       toast.success('Problem built successfully!');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to generate problem');
+      const serverMsg = err?.response?.data?.error?.message || err?.message || 'Failed to generate problem';
+      toast.error(serverMsg);
       setStep('input');
     }
   };
@@ -94,9 +95,9 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
         toast.success('Problem saved to your bank!');
       }
       onClose();
-      // Reload page to reflect new problem context if attached
       if (roomId) {
-        window.location.reload();
+        // Always navigate to the room — handles both "already in room" and "on dashboard" cases
+        window.location.href = `/rooms/${roomId}`;
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to save problem');
@@ -107,19 +108,18 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
-      <div style={{ background: '#0d0f14', border: '1px solid var(--dm-border)', borderRadius: '16px', width: '100%', maxWidth: step === 'preview' ? '800px' : '600px', display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', transition: 'max-width 0.3s ease' }}>
+      <div style={{ background: '#000', border: '4px solid #fff', borderRadius: '0px', width: '100%', maxWidth: step === 'preview' ? '800px' : '600px', display: 'flex', flexDirection: 'column', boxShadow: '8px 8px 0px 0px #fbbf24', transition: 'max-width 0.3s ease' }}>
         
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: '1px solid var(--dm-border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: '4px solid #fff' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {step === 'input' && (
               <button onClick={() => setStep('method')} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}>
                 <ArrowLeft size={18} />
               </button>
             )}
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Sparkles size={18} color="#60a5fa" />
-              AI Problem Builder
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'white', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              [AI] Problem Builder
             </h2>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer' }}>
@@ -139,39 +139,39 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
               
               {method === 'topic' && (
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600 }}>Topic or Concept</label>
+                  <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Topic or Concept</label>
                   <input
                     type="text"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                     placeholder="e.g. Dynamic Programming, Sliding Window, Graphs..."
-                    style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--dm-border)', borderRadius: '8px', color: 'white', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '12px', background: '#000', border: '4px solid #fff', borderRadius: '0px', color: 'white', boxSizing: 'border-box', fontFamily: 'monospace', outline: 'none' }}
                   />
                 </div>
               )}
 
               {method === 'prompt' && (
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600 }}>Problem Description / Prompt</label>
+                  <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Problem Description / Prompt</label>
                   <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Describe the problem you want to create..."
                     rows={4}
-                    style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--dm-border)', borderRadius: '8px', color: 'white', resize: 'vertical', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '12px', background: '#000', border: '4px solid #fff', borderRadius: '0px', color: 'white', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'monospace', outline: 'none' }}
                   />
                 </div>
               )}
 
               {method === 'pasted_statement' && (
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600 }}>Paste Raw Problem Statement</label>
+                  <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Paste Raw Problem Statement</label>
                   <textarea
                     value={pastedStatement}
                     onChange={(e) => setPastedStatement(e.target.value)}
                     placeholder="Paste the full text of a coding problem here..."
                     rows={6}
-                    style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--dm-border)', borderRadius: '8px', color: 'white', resize: 'vertical', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '12px', background: '#000', border: '4px solid #fff', borderRadius: '0px', color: 'white', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'monospace', outline: 'none' }}
                   />
                 </div>
               )}
@@ -180,34 +180,34 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <div style={{ display: 'flex', gap: '16px' }}>
                     <div style={{ flex: 1 }}>
-                      <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600 }}>Problem Number</label>
+                      <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Problem Number</label>
                       <input
                         type="text"
                         value={leetcodeNumber}
                         onChange={(e) => setLeetcodeNumber(e.target.value)}
                         placeholder="e.g. 1"
-                        style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--dm-border)', borderRadius: '8px', color: 'white', boxSizing: 'border-box' }}
+                        style={{ width: '100%', padding: '12px', background: '#000', border: '4px solid #fff', borderRadius: '0px', color: 'white', boxSizing: 'border-box', fontFamily: 'monospace', outline: 'none' }}
                       />
                     </div>
                     <div style={{ flex: 2 }}>
-                      <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600 }}>Problem Title</label>
+                      <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Problem Title</label>
                       <input
                         type="text"
                         value={leetcodeTitle}
                         onChange={(e) => setLeetcodeTitle(e.target.value)}
                         placeholder="e.g. Two Sum"
-                        style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--dm-border)', borderRadius: '8px', color: 'white', boxSizing: 'border-box' }}
+                        style={{ width: '100%', padding: '12px', background: '#000', border: '4px solid #fff', borderRadius: '0px', color: 'white', boxSizing: 'border-box', fontFamily: 'monospace', outline: 'none' }}
                       />
                     </div>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600 }}>Problem URL</label>
+                    <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Problem URL</label>
                     <input
                       type="text"
                       value={leetcodeUrl}
                       onChange={(e) => setLeetcodeUrl(e.target.value)}
                       placeholder="e.g. https://leetcode.com/problems/two-sum"
-                      style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--dm-border)', borderRadius: '8px', color: 'white', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '12px', background: '#000', border: '4px solid #fff', borderRadius: '0px', color: 'white', boxSizing: 'border-box', fontFamily: 'monospace', outline: 'none' }}
                     />
                   </div>
                   <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>Provide any combination of the above. AI will automatically infer the difficulty and tags.</p>
@@ -217,11 +217,11 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
               {(method === 'topic' || method === 'prompt') && (
                 <div style={{ display: 'flex', gap: '16px' }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600 }}>Difficulty</label>
+                    <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Difficulty</label>
                     <select
                       value={difficulty}
                       onChange={(e) => setDifficulty(e.target.value as ProblemDifficulty)}
-                      style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--dm-border)', borderRadius: '8px', color: 'white', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '12px', background: '#000', border: '4px solid #fff', borderRadius: '0px', color: 'white', boxSizing: 'border-box', fontFamily: 'monospace', outline: 'none', appearance: 'none' }}
                     >
                       <option value="easy">Easy</option>
                       <option value="medium">Medium</option>
@@ -229,13 +229,13 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
                     </select>
                   </div>
                   <div style={{ flex: 2 }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600 }}>Tags (Optional, comma separated)</label>
+                    <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Tags (Optional, comma separated)</label>
                     <input
                       type="text"
                       value={tags}
                       onChange={(e) => setTags(e.target.value)}
                       placeholder="e.g. Arrays, Sorting"
-                      style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--dm-border)', borderRadius: '8px', color: 'white', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '12px', background: '#000', border: '4px solid #fff', borderRadius: '0px', color: 'white', boxSizing: 'border-box', fontFamily: 'monospace', outline: 'none' }}
                     />
                   </div>
                 </div>
@@ -247,8 +247,7 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0' }}>
               <div style={{ position: 'relative', width: '64px', height: '64px', marginBottom: '24px' }}>
                 <div style={{ position: 'absolute', inset: 0, border: '4px solid rgba(99, 102, 241, 0.2)', borderRadius: '50%' }}></div>
-                <div style={{ position: 'absolute', inset: 0, border: '4px solid #60a5fa', borderRadius: '50%', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }}></div>
-                <Sparkles style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: '#60a5fa' }} size={24} />
+                <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: '#60a5fa', fontWeight: 800, fontFamily: 'monospace' }}>AI</span>
               </div>
               <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'white', margin: '0 0 8px 0' }}>Building your problem...</h3>
               <p style={{ color: '#9ca3af', margin: 0, fontSize: '14px', textAlign: 'center' }}>
@@ -265,38 +264,37 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
 
         {/* Footer Actions */}
         {step === 'input' && (
-          <div style={{ padding: '16px 24px', borderTop: '1px solid var(--dm-border)', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+          <div style={{ padding: '16px 24px', borderTop: '4px solid #fff', display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
             <button
               onClick={() => setStep('method')}
-              style={{ padding: '10px 20px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--dm-border)', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+              style={{ padding: '10px 24px', background: '#000', color: 'white', border: '4px solid #fff', borderRadius: '0px', fontWeight: 700, cursor: 'pointer', fontFamily: 'monospace', textTransform: 'uppercase', boxShadow: '4px 4px 0px 0px #fff' }}
             >
               Cancel
             </button>
             <button
               onClick={handleGenerate}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#fbbf24', color: '#000', border: '4px solid #fff', borderRadius: '0px', fontWeight: 700, cursor: 'pointer', fontFamily: 'monospace', textTransform: 'uppercase', boxShadow: '4px 4px 0px 0px #fff' }}
             >
-              <Sparkles size={16} /> Generate Problem
+              Generate Problem
             </button>
           </div>
         )}
 
         {step === 'preview' && (
-          <div style={{ padding: '16px 24px', borderTop: '1px solid var(--dm-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '16px 24px', borderTop: '4px solid #fff', display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
             <button
               onClick={() => setStep('input')}
+              style={{ padding: '10px 24px', background: '#000', color: 'white', border: '4px solid #fff', borderRadius: '0px', fontWeight: 700, cursor: 'pointer', fontFamily: 'monospace', textTransform: 'uppercase', boxShadow: '4px 4px 0px 0px #fff' }}
               disabled={isSaving}
-              style={{ padding: '10px 20px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--dm-border)', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
             >
-              Back to Edit
+              Back to Editor
             </button>
             <button
               onClick={handleSaveAndAttach}
               disabled={isSaving}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#34d399', color: '#080a0f', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#10b981', color: '#000', border: '4px solid #fff', borderRadius: '0px', fontWeight: 700, cursor: isSaving ? 'not-allowed' : 'pointer', fontFamily: 'monospace', textTransform: 'uppercase', boxShadow: '4px 4px 0px 0px #fff' }}
             >
-              {isSaving ? <Loader2 size={18} className="animate-spin" /> : roomId ? <Play size={18} /> : <Save size={18} />}
-              {roomId ? (isSaving ? 'Attaching...' : 'Save & Use in Room') : (isSaving ? 'Saving...' : 'Save to Problem Bank')}
+              {isSaving ? 'Saving...' : roomId ? 'Save & Use in Room' : 'Save Problem'}
             </button>
           </div>
         )}

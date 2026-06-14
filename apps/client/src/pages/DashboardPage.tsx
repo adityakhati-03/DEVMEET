@@ -12,14 +12,15 @@ import { roomService } from '../services/roomService';
 import api from '../services/api';
 import type { IRoom, IUser, RoomMode, InterviewType } from '@devmeet/shared';
 import RoomModeBadge from '../components/rooms/RoomModeBadge';
-import RoomModeSelector from '../components/rooms/RoomModeSelector';
 
-// ── Design tokens ─────────────────────────────────────────────────────────────
+// ── Brutalist Design tokens ─────────────────────────────────────────────────────────────
 const card: React.CSSProperties = {
   background: 'var(--dm-card)',
-  border: '1px solid var(--dm-border)',
-  borderRadius: '12px',
+  border: '4px solid var(--dm-border)',
+  borderRadius: '0px',
   padding: '24px',
+  boxShadow: '8px 8px 0px rgba(255,255,255,0.05)',
+  transition: 'all 0.15s ease-out',
 };
 const sectionGap: React.CSSProperties = { marginBottom: '40px' };
 const sectionHead: React.CSSProperties = {
@@ -28,22 +29,27 @@ const sectionHead: React.CSSProperties = {
 };
 const sectionTitle: React.CSSProperties = {
   display: 'flex', alignItems: 'center', gap: '8px',
-  fontSize: '13px', fontWeight: 700, color: 'var(--dm-text)',
-  textTransform: 'uppercase', letterSpacing: '0.07em',
+  fontFamily: '"Space Grotesk", system-ui, sans-serif',
+  fontSize: '18px', fontWeight: 800, color: 'var(--dm-text)',
+  textTransform: 'uppercase', letterSpacing: '-0.02em',
 };
 const badge: React.CSSProperties = {
-  padding: '2px 8px', borderRadius: '20px',
-  background: 'var(--dm-surface)',
-  color: 'var(--dm-muted)', fontSize: '11px', fontWeight: 700,
+  padding: '4px 12px', borderRadius: '0px',
+  border: '2px solid var(--dm-muted)',
+  background: 'var(--dm-bg)',
+  fontFamily: '"JetBrains Mono", monospace',
+  color: 'var(--dm-muted)', fontSize: '12px', fontWeight: 700,
 };
 const btn = (variant: 'primary' | 'ghost' | 'danger'): React.CSSProperties => ({
   display: 'inline-flex', alignItems: 'center', gap: '8px',
-  padding: '10px 18px', borderRadius: '8px',
+  padding: '12px 20px', borderRadius: '0px',
+  fontFamily: '"JetBrains Mono", monospace', textTransform: 'uppercase',
   fontSize: '14px', fontWeight: 700, cursor: 'pointer',
-  transition: 'all 150ms', border: 'none',
-  ...(variant === 'primary' && { background: '#34d399', color: '#080a0f' }),
-  ...(variant === 'ghost'   && { background: 'var(--dm-surface)', color: 'var(--dm-text)', border: '1px solid var(--dm-border)' }),
-  ...(variant === 'danger'  && { background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.15)' }),
+  transition: 'all 0.15s', border: '2px solid transparent',
+  boxShadow: '4px 4px 0px rgba(255,255,255,0.1)',
+  ...(variant === 'primary' && { background: 'var(--dm-accent)', color: '#000', borderColor: 'var(--dm-accent)' }),
+  ...(variant === 'ghost'   && { background: 'transparent', color: 'var(--dm-text)', borderColor: 'var(--dm-border)', boxShadow: 'none' }),
+  ...(variant === 'danger'  && { background: '#ef4444', color: '#000', borderColor: '#ef4444' }),
 });
 
 export default function DashboardPage() {
@@ -51,10 +57,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const [rooms, setRooms]       = useState<IRoom[]>([]);
   const [loading, setLoading]   = useState(true);
-  const [creating, setCreating] = useState(false);
-  const [showModeSelector, setShowModeSelector] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [joinId, setJoinId]     = useState('');
   const [activeUsers, setActiveUsers] = useState<any[]>([]);
 
   useEffect(() => {
@@ -106,34 +109,6 @@ export default function DashboardPage() {
     } finally {
       setDeleting(null);
     }
-  };
-
-  const handleCreateRoomClick = () => {
-    setShowModeSelector(true);
-  };
-
-  const handleCreateRoom = async (mode: RoomMode, interviewType: InterviewType, title: string) => {
-    setCreating(true);
-    setShowModeSelector(false);
-    try {
-      // Generate a short 10-character alphanumeric ID
-      const newRoomId = Math.random().toString(36).substring(2, 12);
-      await roomService.createRoom({
-        roomId: newRoomId,
-        mode,
-        interviewType,
-        title
-      });
-      toast.success('Room created successfully!');
-      navigate(`/rooms/${newRoomId}`);
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to create room');
-      setCreating(false);
-    }
-  };
-
-  const handleJoin = () => {
-    if (joinId.trim()) navigate(`/rooms/${joinId.trim()}`);
   };
 
   /* ── Skeleton ── */
@@ -268,10 +243,10 @@ export default function DashboardPage() {
           </div>
         ))}
 
-        <button onClick={handleCreateRoomClick} disabled={creating} style={{ ...btn('primary'), display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', textDecoration: 'none', borderRadius: '12px', padding: '24px', fontSize: '16px', opacity: creating ? 0.7 : 1 }}>
+        <Link to="/create-room" style={{ ...btn('primary'), display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', textDecoration: 'none', borderRadius: '0px', padding: '24px', fontSize: '16px' }}>
           <PlusCircle style={{ width: '28px', height: '28px' }} />
-          {creating ? 'Creating...' : 'Create Room'}
-        </button>
+          Create Room
+        </Link>
       </div>
 
       {/* Main Grid */}
@@ -289,21 +264,15 @@ export default function DashboardPage() {
               {/* Join Room */}
               <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
-                    <SearchCode style={{ width: '18px', height: '18px', color: 'white' }} />
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
+                    <SearchCode style={{ width: '18px', height: '18px', color: '#34d399' }} />
                   </div>
                   <h3 style={{ fontWeight: 700, color: 'white', fontSize: '15px', margin: '0 0 6px' }}>Join via Room ID</h3>
                   <p style={{ fontSize: '13px', color: '#78716c', margin: 0 }}>Jump into a colleague&apos;s room instantly.</p>
                 </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <input
-                    type="text" placeholder="Room ID..." value={joinId}
-                    onChange={e => setJoinId(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleJoin()}
-                    style={{ flex: 1, background: '#080a0f', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '10px 14px', fontSize: '14px', color: 'white', outline: 'none' }}
-                  />
-                  <button onClick={handleJoin} style={{ ...btn('ghost'), padding: '10px 16px' }}>Join</button>
-                </div>
+                <Link to="/join-room" style={{ ...btn('ghost'), justifyContent: 'center', textDecoration: 'none' }}>
+                  Go to Join Page <ArrowRight style={{ width: '15px', height: '15px' }} />
+                </Link>
               </div>
 
               {/* Resume Session */}
@@ -326,14 +295,13 @@ export default function DashboardPage() {
                     <ArrowRight style={{ width: '15px', height: '15px' }} />
                   </Link>
                 ) : (
-                  <button
-                    onClick={handleCreateRoomClick}
-                    disabled={creating}
-                    style={{ ...btn('primary'), justifyContent: 'center', opacity: creating ? 0.7 : 1 }}
+                  <Link
+                    to="/create-room"
+                    style={{ ...btn('primary'), justifyContent: 'center', textDecoration: 'none' }}
                   >
-                    {creating ? 'Creating...' : 'Create First Room'}
+                    Create First Room
                     <ArrowRight style={{ width: '15px', height: '15px' }} />
-                  </button>
+                  </Link>
                 )}
               </div>
             </div>
@@ -347,13 +315,13 @@ export default function DashboardPage() {
                 Hosted Rooms
                 <span style={badge}>{createdRooms.length}</span>
               </span>
-              <button onClick={handleCreateRoomClick} disabled={creating} style={{ ...btn('ghost'), fontSize: '13px', padding: '8px 14px', textDecoration: 'none', opacity: creating ? 0.7 : 1 }}>
+              <Link to="/create-room" style={{ ...btn('ghost'), fontSize: '13px', padding: '8px 14px', textDecoration: 'none' }}>
                 <PlusCircle style={{ width: '14px', height: '14px' }} /> New Room
-              </button>
+              </Link>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '16px' }}>
               {createdRooms.length === 0
-                ? <Empty label="You haven't hosted any rooms yet." cta="Create your first room" action={handleCreateRoomClick} />
+                ? <Empty label="You haven't hosted any rooms yet." cta="Create your first room" href="/create-room" />
                 : createdRooms.map(r => <RoomCard key={r._id} room={r} isOwner />)
               }
             </div>
@@ -446,12 +414,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      {showModeSelector && (
-        <RoomModeSelector 
-          onClose={() => setShowModeSelector(false)} 
-          onCreate={handleCreateRoom} 
-        />
-      )}
     </div>
   );
 }
