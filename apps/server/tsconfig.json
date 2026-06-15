@@ -4,7 +4,6 @@
     "module": "CommonJS",
     "lib": ["ES2022"],
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,9 +14,9 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@devmeet/shared": ["../../packages/shared/dist/index"]
+      "@devmeet/shared": ["../../packages/shared/src/index"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../packages/shared/src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
