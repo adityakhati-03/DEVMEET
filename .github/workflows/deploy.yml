@@ -21,7 +21,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "."
           target: "/home/ubuntu/devmeet"
-          rm: true
           strip_components: 0
           # We don't want to copy massive node_modules or git histories
           # .env is handled separately by the server already, so we don't overwrite it
