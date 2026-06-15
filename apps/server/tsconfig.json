@@ -15,7 +15,7 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@devmeet/shared": ["../../packages/shared/src/index"]
+      "@devmeet/shared": ["../../packages/shared/dist/index"]
     }
   },
   "include": ["src/**/*"],
