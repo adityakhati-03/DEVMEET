@@ -57,11 +57,11 @@ async function generateUniqueUsername(baseName: string): Promise<string> {
 }
 
 function setAuthCookie(res: Response, token: string): void {
-  const isProd = env.nodeEnv === 'production';
+  const isSecure = env.clientUrl.startsWith('https');
   res.cookie('token', token, {
     httpOnly: true,
-    secure: isProd, // Must be true in production for SameSite='none'
-    sameSite: isProd ? 'none' : 'lax', // 'none' allows cross-origin requests (e.g. distinct API domain)
+    secure: isSecure, // Only true if client is HTTPS
+    sameSite: isSecure ? 'none' : 'lax', // 'none' requires secure=true
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/',
   });
@@ -535,7 +535,7 @@ async function handleSocialLogin(email: string, name: string, avatar: string, re
  * GET /api/auth/google
  */
 export async function googleLogin(req: Request, res: Response): Promise<void> {
-  const redirectUri = `http://localhost:5000/api/auth/google/callback`;
+  const redirectUri = `${env.clientUrl}/api/auth/google/callback`;
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=email profile`;
   res.redirect(url);
 }
@@ -555,7 +555,7 @@ export async function googleCallback(req: Request, res: Response, next: NextFunc
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
       code,
-      redirect_uri: `http://localhost:5000/api/auth/google/callback`,
+      redirect_uri: `${env.clientUrl}/api/auth/google/callback`,
       grant_type: 'authorization_code',
     });
 
