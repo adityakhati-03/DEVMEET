@@ -19,7 +19,7 @@ export default function AIInterviewContainer({ room }: AIInterviewContainerProps
   const fetchProblem = async (probId: string) => {
     try {
       if (!room.interviewSessionId) {
-        await aiInterviewService.createSession({ roomId: room.roomId, problemId: probId });
+        await aiInterviewService.createSession({ roomId: room.roomId, problemId: probId, durationMinutes: 45 });
         window.dispatchEvent(new CustomEvent('roomProblemUpdated'));
         return;
       }

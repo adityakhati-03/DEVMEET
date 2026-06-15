@@ -5,8 +5,6 @@ services:
     build:
       context: .
       dockerfile: apps/client/Dockerfile
-    ports:
-      - "80:80"
     depends_on:
       - server
     networks:
@@ -16,12 +14,10 @@ services:
     build:
       context: .
       dockerfile: apps/server/Dockerfile
-    ports:
-      - "5000:5000"
     environment:
       - NODE_ENV=production
       - PORT=5000
-      - CLIENT_URL=http://localhost
+      - CLIENT_URL=${CLIENT_URL:-http://localhost}
       - MONGODB_URI=${MONGODB_URI}
       - JWT_SECRET=${JWT_SECRET}
       - BCRYPT_SALT_ROUNDS=${BCRYPT_SALT_ROUNDS:-12}
@@ -63,6 +59,19 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - devmeet_net
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - client
+      - server
     networks:
       - devmeet_net
 

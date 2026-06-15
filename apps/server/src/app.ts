@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import compression from 'compression';
 import { env } from './config/env';
 import { redis } from './config/redis';
 import mongoose from 'mongoose';
@@ -29,6 +30,7 @@ const app = express();
 // ─── Core Middlewares ─────────────────────────────────────────────────────────
 
 app.use(helmet());
+app.use(compression());
 
 app.use(
   cors({

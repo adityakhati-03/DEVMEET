@@ -15,6 +15,7 @@ COPY apps/client ./apps/client
 
 # Build client
 WORKDIR /app/apps/client
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
 # Production server

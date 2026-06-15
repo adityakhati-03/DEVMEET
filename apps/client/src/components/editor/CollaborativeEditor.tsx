@@ -22,7 +22,7 @@ import { SUPPORTED_LANGUAGES } from '@devmeet/shared';
 import { executionService, TERMINAL_STATUSES } from '../../services/executionService';
 import Toolbar from '../roomstructure/Toolbar';
 import styles from './CollaborativeEditor.module.css';
-import GenerateTestCasesButton from '../test-cases/GenerateTestCasesButton';
+
 import AIProblemBuilderButton from '../ai-problem-builder/AIProblemBuilderButton';
 
 interface CurrentUser {
