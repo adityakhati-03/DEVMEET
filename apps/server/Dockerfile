@@ -28,9 +28,9 @@ COPY --from=builder /app/apps/server/dist ./apps/server/dist
 
 # Explicitly place @devmeet/shared in node_modules so Node can resolve it at runtime
 # (npm workspace symlinks don't survive Docker COPY)
-RUN mkdir -p ./node_modules/@devmeet/shared
-COPY --from=builder /app/packages/shared/package.json ./node_modules/@devmeet/shared/package.json
-COPY --from=builder /app/packages/shared/src ./node_modules/@devmeet/shared/src
+RUN mkdir -p /app/node_modules/@devmeet/shared
+COPY --from=builder /app/packages/shared/package.json /app/node_modules/@devmeet/shared/package.json
+COPY --from=builder /app/packages/shared/src /app/node_modules/@devmeet/shared/src
 
 WORKDIR /app/apps/server
 EXPOSE 5000
