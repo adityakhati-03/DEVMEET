@@ -28,6 +28,8 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/server/package*.json ./apps/server/
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
+# Copy server-specific node_modules (packages not hoisted to root)
+COPY --from=builder /app/apps/server/node_modules ./apps/server/node_modules
 
 # The npm workspace symlink for @devmeet/shared is broken in production image.
 # Replace it with the actual compiled package output.
