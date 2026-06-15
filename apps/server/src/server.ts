@@ -21,8 +21,8 @@ async function start(): Promise<void> {
   await connectDB();
 
   // 3. Start the HTTP server
-  const server = app.listen(env.port, () => {
-    console.log(`🚀 DevMeet server running on http://localhost:${env.port}`);
+  const server = app.listen(env.port, '0.0.0.0', () => {
+    console.log(`🚀 DevMeet server running on http://0.0.0.0:${env.port}`);
     console.log(`   Environment : ${env.nodeEnv}`);
     console.log(`   Client URL  : ${env.clientUrl}`);
   });
