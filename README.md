@@ -300,5 +300,25 @@ DevMeet demonstrates:
 4. **WebRTC Video Conferencing** — Low-latency video via SFU architecture through Stream SDK.
 5. **AI-Powered Experiences** — Automated mock interviews and on-the-fly problem generation powered by Google Gemini.
 6. **Security-First Design** — Multi-layer protection from password hashing to kernel capabilities.
+7. **Automated Deployment** — Continuous integration and deployment via GitHub Actions to an AWS EC2 instance.
+
+---
+
+## 13. Deployment Architecture
+
+DevMeet is built to be easily deployed to a cloud provider using Docker Compose.
+
+### Production Environment (AWS EC2)
+The live application runs on an AWS EC2 instance. The entire stack (Frontend, Backend, Worker, Redis) is orchestrated via a single `docker-compose.yml` file. 
+
+*   **Nginx Reverse Proxy:** We use an Nginx container to route traffic on port 80. API requests are proxied to the Node.js backend, while all other requests serve the static built React frontend.
+*   **Memory Management:** Compiling the frontend using Vite requires significant RAM. On smaller EC2 instances (like `t3.micro`), we utilize a large Virtual Swap File (e.g., 6GB) and set `NODE_OPTIONS="--max-old-space-size=4096"` in the Dockerfile to prevent out-of-memory crashes during the build process.
+
+### CI/CD Pipeline (GitHub Actions)
+Deployments are 100% automated using GitHub Actions.
+1. When code is pushed to the `main` branch, the `.github/workflows/deploy.yml` pipeline triggers.
+2. It securely SSHs into the AWS EC2 server using repository Secrets.
+3. It syncs the updated codebase (excluding heavy folders like `node_modules`).
+4. It executes `docker compose up -d --build` on the server, ensuring zero-downtime rolling updates.
 
 Happy coding! 🚀
