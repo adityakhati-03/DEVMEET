@@ -9,11 +9,14 @@ COPY apps/server/package*.json ./apps/server/
 # Install all workspace deps
 RUN npm ci
 
-# Copy all source
+# Copy and build packages/shared first
 COPY packages/shared ./packages/shared
-COPY apps/server ./apps/server
+WORKDIR /app/packages/shared
+RUN npx tsc
 
-# Build server (tsconfig includes shared sources for type-checking)
+# Copy and build the server
+WORKDIR /app
+COPY apps/server ./apps/server
 WORKDIR /app/apps/server
 RUN npm run build
 
@@ -26,11 +29,11 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/server/package*.json ./apps/server/
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
 
-# npm workspace left a broken symlink at node_modules/@devmeet/shared
-# Remove it so we can place the real compiled package there
+# The npm workspace symlink for @devmeet/shared is broken in production image.
+# Replace it with the actual compiled package output.
 RUN rm -f /app/node_modules/@devmeet/shared
 COPY --from=builder /app/packages/shared/package.json /app/node_modules/@devmeet/shared/package.json
-COPY --from=builder /app/packages/shared/src /app/node_modules/@devmeet/shared/src
+COPY --from=builder /app/packages/shared/dist /app/node_modules/@devmeet/shared/dist
 
 WORKDIR /app/apps/server
 EXPOSE 5000
