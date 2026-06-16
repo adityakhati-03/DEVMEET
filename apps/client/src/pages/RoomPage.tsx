@@ -13,6 +13,7 @@ import AIInterviewContainer from './AIInterviewContainer';
 import InterviewRoomPlaceholder from '../components/rooms/InterviewRoomPlaceholder';
 import RoomFullscreenButton from '../components/RoomFullscreenButton';
 import RoomCopyLinkButton from '../components/RoomCopyLinkButton';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 /**
  * RoomPage — adapted from src/app/room/[roomId]/page.tsx
@@ -76,15 +77,7 @@ export default function RoomPage() {
   }, [fetchRoom]);
 
   if (authLoading || loading) {
-    return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--dm-bg)' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ width: '40px', height: '40px', border: '4px solid var(--dm-border)', borderTopColor: 'var(--dm-accent)', borderRadius: '0', animation: 'spin 0.5s linear infinite', margin: '0 auto 16px' }} />
-          <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', fontSize: '14px', textTransform: 'uppercase', fontWeight: 700 }}>Loading...</p>
-        </div>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
+    return <LoadingSpinner fullScreen message="Loading..." />;
   }
 
   if (error) {

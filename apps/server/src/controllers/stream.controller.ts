@@ -55,7 +55,7 @@ export async function getStreamToken(req: Request, res: Response, next: NextFunc
       validity_in_seconds: validity,
     });
 
-    res.status(200).json({ success: true, data: { token } });
+    res.status(200).json({ success: true, data: { token, apiKey: env.streamVideoApiKey } });
   } catch (error) {
     next(error);
   }

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { updateProfile, togglePinRoom, getActiveUsers } from '../controllers/user.controller';
+import { updateProfile, togglePinRoom, getActiveUsers, searchUsers } from '../controllers/user.controller';
 import { requireAuth } from '../middlewares/auth.middleware';
 import { createRateLimitMiddleware } from '../middlewares/rateLimit.middleware';
 
@@ -12,5 +12,6 @@ const pinRoomLimiter = createRateLimitMiddleware({ scope: 'user:pin', limit: 20,
 router.patch('/profile', updateProfileLimiter, updateProfile);
 router.post('/pinned-rooms/:roomId', pinRoomLimiter, togglePinRoom);
 router.get('/active', getActiveUsers);
+router.get('/search', searchUsers);
 
 export default router;

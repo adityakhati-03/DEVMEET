@@ -102,3 +102,33 @@ export async function getActiveUsers(req: Request, res: Response, next: NextFunc
     next(error);
   }
 }
+
+export async function searchUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const userId = req.user!.id;
+    const query = req.query.q as string;
+
+    if (!query || query.length < 2) {
+      res.status(200).json({ success: true, data: { users: [] } });
+      return;
+    }
+
+    const regex = new RegExp(query, 'i');
+    const users = await UserModel.find({
+      _id: { $ne: userId },
+      $or: [
+        { name: { $regex: regex } },
+        { username: { $regex: regex } },
+      ]
+    })
+      .select('name username avatar')
+      .limit(10);
+
+    res.status(200).json({
+      success: true,
+      data: { users },
+    });
+  } catch (error) {
+    next(error);
+  }
+}

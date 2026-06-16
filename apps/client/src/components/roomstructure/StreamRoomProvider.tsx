@@ -17,15 +17,14 @@ import {
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { Video, Loader2, VideoOff, Mic, MicOff } from 'lucide-react';
 import { toast } from 'sonner';
-
-const API_KEY = import.meta.env.VITE_STREAM_VIDEO_API_KEY as string;
+import LoadingSpinner from '../ui/LoadingSpinner';
 
 interface StreamRoomProviderProps {
   roomId: string;
   userId: string;
   userName: string;
   userAvatar?: string;
-  getStreamToken: () => Promise<string>;
+  getStreamToken: () => Promise<{ token: string; apiKey: string }>;
   children: ReactNode;
 }
 
@@ -33,6 +32,7 @@ export default function StreamRoomProvider({
   roomId, userId, userName, userAvatar, getStreamToken, children,
 }: StreamRoomProviderProps) {
   const [token, setToken] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
   const [client, setClient] = useState<StreamVideoClient | null>(null);
   const [call, setCall] = useState<Call | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +43,12 @@ export default function StreamRoomProvider({
     if (token) return;
 
     getStreamToken()
-      .then((t) => { if (isMounted) setToken(t); })
+      .then((data) => { 
+        if (isMounted) {
+          setToken(data.token);
+          setApiKey(data.apiKey);
+        }
+      })
       .catch((e: Error) => { if (isMounted) setError(e.message || 'Failed to get video token'); });
 
     return () => { isMounted = false; };
@@ -51,7 +56,7 @@ export default function StreamRoomProvider({
 
   // Initialize Stream client once token is ready
   useEffect(() => {
-    if (!API_KEY || !userId || !token) return;
+    if (!apiKey || !userId || !token) return;
 
     const streamUser: User = {
       id: userId,
@@ -60,7 +65,7 @@ export default function StreamRoomProvider({
     };
 
     // @ts-ignore – StreamVideoClient has complex overloaded constructor types
-    const c = new StreamVideoClient({ apiKey: API_KEY, user: streamUser, token });
+    const c = new StreamVideoClient({ apiKey: apiKey, user: streamUser, token });
     const callInstance = c.call('default', roomId);
 
     setClient(c);
@@ -71,7 +76,7 @@ export default function StreamRoomProvider({
       setClient(null);
       setCall(null);
     };
-  }, [roomId, userId, userName, userAvatar, token]);
+  }, [roomId, userId, userName, userAvatar, token, apiKey]);
 
   const centerStyle: React.CSSProperties = {
     flex: 1, display: 'flex', flexDirection: 'column',
@@ -87,12 +92,7 @@ export default function StreamRoomProvider({
     </div>
   );
 
-  if (!client || !call) return (
-    <div style={centerStyle}>
-      <Loader2 className="animate-spin text-emerald-400 w-6 h-6" />
-      <p style={{ fontSize: '14px', color: '#78716c' }}>Initializing secure video line...</p>
-    </div>
-  );
+  if (!client || !call) return <LoadingSpinner fullScreen={true} message="Initializing secure video line..." />;
 
   return (
     <StreamVideo client={client}>

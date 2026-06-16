@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import type { IDiscussion, IEvent, IUser, IFriendship } from '@devmeet/shared';
-import { MessageSquare, Calendar, Users, PlusCircle, Search, UserPlus, Check, X, ArrowRight } from 'lucide-react';
+import { MessageSquare, Calendar, Users, PlusCircle, Search, UserPlus, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 import { useSearchParams } from 'react-router-dom';
 
@@ -19,6 +20,10 @@ export default function CommunityPage() {
   const [friendRequests, setFriendRequests] = useState<IFriendship[]>([]);
   const [friends, setFriends] = useState<IFriendship[]>([]);
   
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<IUser[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
   const fetchDiscussions = () => api.get('/api/community/discussions').then(r => setDiscussions(r.data.data.discussions));
@@ -34,6 +39,25 @@ export default function CommunityPage() {
     Promise.all([fetchDiscussions(), fetchEvents(), fetchMembers(), fetchFriends()])
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (searchQuery.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await api.get(`/api/users/search?q=${encodeURIComponent(searchQuery)}`);
+        setSearchResults(res.data.data.users);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const [newDiscussionTitle, setNewDiscussionTitle] = useState('');
   const [newDiscussionContent, setNewDiscussionContent] = useState('');
@@ -99,7 +123,7 @@ export default function CommunityPage() {
         </div>
 
         {loading ? (
-          <div style={{ color: '#94a3b8' }}>Loading community data...</div>
+          <LoadingSpinner message="Loading community data..." />
         ) : (
           <div>
             {/* Discussions Tab */}
@@ -184,6 +208,42 @@ export default function CommunityPage() {
             {/* Friends Tab */}
             {activeTab === 'friends' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                <div style={{ background: '#1e293b', padding: '24px', borderRadius: '12px', border: '1px solid #334155' }}>
+                  <h3 style={{ fontSize: '18px', color: 'white', margin: '0 0 16px 0' }}>Find Friends</h3>
+                  <div style={{ position: 'relative' }}>
+                    <Search style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} size={18} />
+                    <input 
+                      type="text" 
+                      placeholder="Search by name or @username..." 
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      style={{ width: '100%', padding: '12px 16px 12px 42px', borderRadius: '8px', background: '#0f172a', border: '1px solid #334155', color: 'white', outline: 'none' }}
+                    />
+                  </div>
+                  {isSearching && <p style={{ color: '#64748b', fontSize: '13px', marginTop: '12px' }}>Searching...</p>}
+                  {searchResults.length > 0 && (
+                    <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {searchResults.map(u => (
+                        <div key={u._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', background: '#0f172a', borderRadius: '8px', border: '1px solid #334155' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=1e293b&color=34d399`} alt={u.name} style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
+                            <div>
+                              <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 2px 0' }}>{u.name}</h4>
+                              <p style={{ color: '#64748b', fontSize: '12px', margin: 0 }}>@{u.username}</p>
+                            </div>
+                          </div>
+                          <button onClick={() => handleSendFriendRequest(u._id)} style={{ background: 'rgba(52,211,153,0.1)', color: '#34d399', border: '1px solid rgba(52,211,153,0.2)', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <UserPlus size={14} /> Add
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
+                    <p style={{ color: '#64748b', fontSize: '13px', marginTop: '12px' }}>No users found.</p>
+                  )}
+                </div>
+
                 {friendRequests.length > 0 && (
                   <div>
                     <h3 style={{ fontSize: '18px', color: 'white', marginBottom: '16px' }}>Pending Requests ({friendRequests.length})</h3>
