@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Loader2, MailCheck } from 'lucide-react';
 import { authService } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 
 export default function VerifyPage() {
   const [code, setCode] = useState('');
