@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  client:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-adityakhati-03}/devmeet-client:latest
+    depends_on:
+      - server
+    networks:
+      - devmeet_net
+    restart: always
+
+  server:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-adityakhati-03}/devmeet-server:latest
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - CLIENT_URL=${CLIENT_URL:-http://localhost}
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - BCRYPT_SALT_ROUNDS=${BCRYPT_SALT_ROUNDS:-12}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - STREAM_VIDEO_API_KEY=${STREAM_VIDEO_API_KEY}
+      - STREAM_VIDEO_API_SECRET=${STREAM_VIDEO_API_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - REDIS_URL=redis://redis:6379
+      - RATE_LIMIT_ENABLED=true
+    depends_on:
+      - redis
+    networks:
+      - devmeet_net
+    restart: always
+
+  worker:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-adityakhati-03}/devmeet-worker:latest
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=${MONGODB_URI}
+      - REDIS_URL=redis://redis:6379
+      - MAX_CODE_SIZE_KB=100
+      - MAX_STDIN_SIZE_KB=100
+      - MAX_OUTPUT_SIZE_KB=100
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+    depends_on:
+      - redis
+    networks:
+      - devmeet_net
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - devmeet_net
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/nginx/ssl:ro
+    depends_on:
+      - client
+      - server
+    networks:
+      - devmeet_net
+    restart: always
+
+networks:
+  devmeet_net:
+    driver: bridge
+
+volumes:
+  redis_data:
