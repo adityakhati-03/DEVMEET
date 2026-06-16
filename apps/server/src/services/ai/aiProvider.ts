@@ -10,7 +10,7 @@ export function getAIProvider(): AIProvider {
     if (!env.geminiApiKey) {
       throw createError('GEMINI_API_KEY is not configured on the server. Please add it to your .env file.', 503, 'AI_NOT_CONFIGURED');
     }
-    return new GeminiProvider(env.geminiApiKey, env.aiModel || 'gemini-1.5-flash');
+    return new GeminiProvider(env.geminiApiKey, env.aiModel || 'gemini-2.0-flash');
   }
 
   throw createError(`Unsupported AI provider: ${providerType}`, 500, 'UNSUPPORTED_AI_PROVIDER');
