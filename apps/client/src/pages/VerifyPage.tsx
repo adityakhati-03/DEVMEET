@@ -5,9 +5,12 @@ import { authService } from '../services/authService';
 
 export default function VerifyPage() {
   const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const { setUser } = useAuth();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -21,9 +24,12 @@ export default function VerifyPage() {
     setSuccessMsg('');
 
     try {
-      const result = await authService.verifyOtp(username, code);
+      const result = await authService.completeSignup(username, code, password);
       setSuccessMsg(result.message || 'Account activated! Redirecting...');
-      setTimeout(() => navigate('/login'), 1500);
+      setTimeout(() => {
+        // Force reload to get me() state or just redirect since the token is set
+        window.location.href = '/dashboard';
+      }, 1500);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Incorrect verification code.');
     } finally {
@@ -57,6 +63,27 @@ export default function VerifyPage() {
               />
             </div>
 
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--dm-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
+                Create Password
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  name="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" required disabled={loading}
+                  value={password} onChange={(e) => setPassword(e.target.value)}
+                  style={{ width: '100%', background: 'var(--dm-input)', border: '1px solid var(--dm-border)', borderRadius: '8px', padding: '14px', fontSize: '16px', color: 'var(--dm-text)', outline: 'none', boxSizing: 'border-box' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '12px', top: '14px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--dm-muted)' }}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              <p style={{ fontSize: '11px', color: 'var(--dm-muted)', marginTop: '6px' }}>Min 8 chars with uppercase, lowercase, number &amp; special char.</p>
+            </div>
+
             {error && (
               <div style={{ padding: '12px 14px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', color: '#f87171', fontSize: '13px', fontWeight: 500, textAlign: 'center' }}>
                 {error}
@@ -68,9 +95,9 @@ export default function VerifyPage() {
               </div>
             )}
 
-            <button type="submit" disabled={loading || code.length < 6}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', borderRadius: '8px', background: '#34d399', color: '#080a0f', fontWeight: 800, fontSize: '15px', border: 'none', cursor: (loading || code.length < 6) ? 'not-allowed' : 'pointer', opacity: (loading || code.length < 6) ? 0.5 : 1 }}>
-              {loading ? <><Loader2 style={{ width: '16px', height: '16px' }} className="animate-spin" /> Verifying...</> : 'Verify Account'}
+            <button type="submit" disabled={loading || code.length < 6 || password.length < 8}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', borderRadius: '8px', background: '#34d399', color: '#080a0f', fontWeight: 800, fontSize: '15px', border: 'none', cursor: (loading || code.length < 6 || password.length < 8) ? 'not-allowed' : 'pointer', opacity: (loading || code.length < 6 || password.length < 8) ? 0.5 : 1 }}>
+              {loading ? <><Loader2 style={{ width: '16px', height: '16px' }} className="animate-spin" /> Verifying...</> : 'Complete Signup'}
             </button>
           </form>
         </div>

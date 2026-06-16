@@ -45,6 +45,11 @@ export const authService = {
     return res.data.data;
   },
 
+  async completeSignup(username: string, code: string, password: string): Promise<{ message: string }> {
+    const res = await api.post('/api/auth/complete-signup', { username, code, password });
+    return res.data.data;
+  },
+
   async forgotPassword(email: string): Promise<{ message: string; username?: string }> {
     const res = await api.post('/api/auth/forgot-password', { email });
     return res.data.data;

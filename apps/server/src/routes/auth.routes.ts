@@ -11,6 +11,7 @@ import {
   googleCallback,
   githubLogin,
   githubCallback,
+  completeSignup,
 } from '../controllers/auth.controller';
 import { requireAuth } from '../middlewares/auth.middleware';
 import { createRateLimitMiddleware } from '../middlewares/rateLimit.middleware';
@@ -25,6 +26,7 @@ const otpVerifyLimiter = createRateLimitMiddleware({ scope: 'auth:verify-otp', l
 
 // Public routes
 router.post('/signup', signupLimiter, signup);
+router.post('/complete-signup', otpVerifyLimiter, completeSignup);
 router.post('/login', loginLimiter, login);
 router.post('/logout', logout);
 router.post('/verify-otp', otpVerifyLimiter, verifyOtp);

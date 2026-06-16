@@ -1,102 +1,90 @@
 import { Request, Response, NextFunction } from 'express';
-import Friendship from '../models/Friendship';
+import FriendshipModel from '../models/Friendship';
 import UserModel from '../models/User';
 
 export async function getFriends(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const userId = req.user!.id;
-    const friendships = await Friendship.find({
+
+    const friends = await FriendshipModel.find({
       $or: [{ requester: userId }, { recipient: userId }],
       status: 'accepted',
-    })
-      .populate('requester', 'name username avatar bio lastActive')
-      .populate('recipient', 'name username avatar bio lastActive');
+    }).populate('requester recipient', 'name username avatar');
 
-    res.status(200).json({ success: true, data: { friendships } });
-  } catch (error) { next(error); }
+    const pendingRequests = await FriendshipModel.find({
+      recipient: userId,
+      status: 'pending',
+    }).populate('requester recipient', 'name username avatar');
+
+    res.status(200).json({
+      success: true,
+      data: { friends, pendingRequests },
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 export async function sendFriendRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const requesterId = req.user!.id;
-    const { recipientUsername } = req.body as { recipientUsername: string };
+    const userId = req.user!.id;
+    const { recipientId } = req.body;
 
-    if (!recipientUsername) {
-      res.status(400).json({
-        success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'recipientUsername is required' },
-      });
+    if (!recipientId || userId === recipientId) {
+      res.status(400).json({ success: false, error: { message: 'Invalid recipient' } });
       return;
     }
 
-    const recipient = await UserModel.findOne({ username: recipientUsername });
-    if (!recipient) {
-      res.status(404).json({
-        success: false,
-        error: { code: 'USER_NOT_FOUND', message: 'User not found' },
-      });
-      return;
-    }
-
-    if (recipient._id.toString() === requesterId) {
-      res.status(400).json({
-        success: false,
-        error: { code: 'INVALID_REQUEST', message: 'Cannot send a friend request to yourself' },
-      });
-      return;
-    }
-
-    const existing = await Friendship.findOne({
+    const existing = await FriendshipModel.findOne({
       $or: [
-        { requester: requesterId, recipient: recipient._id },
-        { requester: recipient._id, recipient: requesterId },
+        { requester: userId, recipient: recipientId },
+        { requester: recipientId, recipient: userId },
       ],
     });
 
     if (existing) {
-      res.status(409).json({
-        success: false,
-        error: { code: 'ALREADY_EXISTS', message: 'Friend request already exists' },
-      });
+      res.status(400).json({ success: false, error: { message: 'Friendship or request already exists' } });
       return;
     }
 
-    const friendship = await Friendship.create({
-      requester: requesterId,
-      recipient: recipient._id,
+    await FriendshipModel.create({
+      requester: userId,
+      recipient: recipientId,
       status: 'pending',
     });
 
-    res.status(201).json({ success: true, data: { friendship } });
-  } catch (error) { next(error); }
+    res.status(201).json({ success: true, data: { message: 'Request sent' } });
+  } catch (error) {
+    next(error);
+  }
 }
 
 export async function respondToFriendRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const userId = req.user!.id;
-    const { id } = req.params;
-    const { action } = req.body as { action: 'accept' | 'decline' };
+    const { id } = req.params; // friendship ID
+    const { status } = req.body;
 
-    const friendship = await Friendship.findById(id);
+    if (!['accepted', 'declined'].includes(status)) {
+      res.status(400).json({ success: false, error: { message: 'Invalid status' } });
+      return;
+    }
+
+    const friendship = await FriendshipModel.findOne({ _id: id, recipient: userId });
     if (!friendship) {
-      res.status(404).json({
-        success: false,
-        error: { code: 'NOT_FOUND', message: 'Friend request not found' },
-      });
+      res.status(404).json({ success: false, error: { message: 'Request not found' } });
       return;
     }
 
-    if (friendship.recipient.toString() !== userId) {
-      res.status(403).json({
-        success: false,
-        error: { code: 'FORBIDDEN', message: 'Only the recipient can respond to this request' },
-      });
-      return;
+    if (status === 'declined') {
+      await friendship.deleteOne();
+    } else {
+      friendship.status = status;
+      await friendship.save();
     }
 
-    friendship.status = action === 'accept' ? 'accepted' : 'declined';
-    await friendship.save();
-
-    res.status(200).json({ success: true, data: { friendship } });
-  } catch (error) { next(error); }
+    res.status(200).json({ success: true, data: { message: `Request ${status}` } });
+  } catch (error) {
+    next(error);
+  }
 }

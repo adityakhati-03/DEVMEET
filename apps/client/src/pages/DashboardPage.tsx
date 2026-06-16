@@ -219,7 +219,7 @@ export default function DashboardPage() {
       {/* Welcome */}
       <div style={{ marginBottom: '40px' }}>
         <h1 style={{ fontSize: '26px', fontWeight: 800, color: 'white', margin: 0, letterSpacing: '-0.5px' }}>
-          {greeting}, <span style={{ color: '#34d399' }}>{user?.name}</span> 👋
+          {greeting}, <span style={{ color: '#34d399' }}>{user?.name}</span>
         </h1>
         <p style={{ color: '#78716c', fontSize: '14px', margin: '6px 0 0', fontWeight: 500 }}>{user?.email}</p>
       </div>

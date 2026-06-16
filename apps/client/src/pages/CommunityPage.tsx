@@ -5,9 +5,13 @@ import type { IDiscussion, IEvent, IUser, IFriendship } from '@devmeet/shared';
 import { MessageSquare, Calendar, Users, PlusCircle, Search, UserPlus, Check, X, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { useSearchParams } from 'react-router-dom';
+
 export default function CommunityPage() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'discussions' | 'events' | 'members' | 'friends'>('discussions');
+  const [searchParams] = useSearchParams();
+  const defaultTab = (searchParams.get('tab') as any) || 'discussions';
+  const [activeTab, setActiveTab] = useState<'discussions' | 'events' | 'members' | 'friends'>(defaultTab);
 
   const [discussions, setDiscussions] = useState<IDiscussion[]>([]);
   const [events, setEvents] = useState<IEvent[]>([]);

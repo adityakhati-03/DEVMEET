@@ -19,13 +19,6 @@ const signupSchema = z.object({
     .regex(/^[a-zA-Z0-9\s]*$/, 'Name can only contain letters, numbers and spaces'),
   username: z.string().min(3).max(30).regex(/^[a-zA-Z0-9_-]+$/).optional(),
   email: z.string().email('Invalid email address').max(100),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      'Password must contain uppercase, lowercase, number and special character'
-    ),
 });
 
 const loginSchema = z.object({
@@ -101,13 +94,11 @@ export async function signup(req: Request, res: Response, next: NextFunction): P
       username = await generateUniqueUsername(body.name);
     }
 
-    const hashedPassword = await bcrypt.hash(body.password, env.bcryptSaltRounds);
     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
     const verifyCodeExpiry = new Date(Date.now() + 3600000);
 
     let newUser;
     if (existingByEmail && !existingByEmail.isVerified) {
-      existingByEmail.password = hashedPassword;
       existingByEmail.name = body.name.trim();
       existingByEmail.verifyCode = verifyCode;
       existingByEmail.verifyCodeExpiry = verifyCodeExpiry;
@@ -116,7 +107,7 @@ export async function signup(req: Request, res: Response, next: NextFunction): P
       newUser = await UserModel.create({
         name: body.name.trim(),
         email: body.email.toLowerCase().trim(),
-        password: hashedPassword,
+        password: null, // Password is set during complete-signup
         username,
         isVerified: false,
         verifyCode,
@@ -137,7 +128,7 @@ export async function signup(req: Request, res: Response, next: NextFunction): P
       return;
     }
 
-    const { password: _pw, verifyCode: _vc, verifyCodeExpiry: _vce, ...safeUser } =
+    const { verifyCode: _vc, verifyCodeExpiry: _vce, ...safeUser } =
       newUser.toObject();
 
     res.status(201).json({
@@ -146,6 +137,110 @@ export async function signup(req: Request, res: Response, next: NextFunction): P
         message: 'Account created. Please check your email for the verification code.',
         username: safeUser.username,
         user: safeUser,
+      },
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: error.errors[0]?.message ?? 'Validation failed' },
+      });
+      return;
+    }
+    next(error);
+  }
+}
+
+const completeSignupSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  code: z.string().min(6, 'Verification code must be 6 digits'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      'Password must contain uppercase, lowercase, number and special character'
+    ),
+});
+
+/**
+ * POST /api/auth/complete-signup
+ */
+export async function completeSignup(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const body = completeSignupSchema.parse(req.body);
+
+    const user = await UserModel.findOne({ username: decodeURIComponent(body.username) });
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        error: { code: 'USER_NOT_FOUND', message: 'User not found' },
+      });
+      return;
+    }
+
+    if (user.isVerified && user.password) {
+      res.status(400).json({
+        success: false,
+        error: { code: 'ALREADY_VERIFIED', message: 'User is already verified and has a password' },
+      });
+      return;
+    }
+
+    const isCodeValid = user.verifyCode === body.code;
+    const isNotExpired = user.verifyCodeExpiry && new Date(user.verifyCodeExpiry) > new Date();
+
+    if (!isNotExpired) {
+      res.status(400).json({
+        success: false,
+        error: { code: 'CODE_EXPIRED', message: 'Verification code has expired. Please sign up again.' },
+      });
+      return;
+    }
+
+    if (!isCodeValid) {
+      res.status(400).json({
+        success: false,
+        error: { code: 'CODE_INVALID', message: 'Incorrect verification code' },
+      });
+      return;
+    }
+
+    user.password = await bcrypt.hash(body.password, env.bcryptSaltRounds);
+    user.isVerified = true;
+    user.verifyCode = undefined;
+    user.verifyCodeExpiry = undefined;
+    await user.save();
+
+    const token = signToken({
+      id: user._id.toString(),
+      email: user.email,
+      username: user.username,
+      name: user.name,
+      avatar: user.avatar,
+      bio: user.bio,
+      isVerified: user.isVerified,
+      isAcceptingMessages: user.isAcceptingMessages,
+      pinnedRooms: user.pinnedRooms,
+    });
+
+    setAuthCookie(res, token);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        message: 'Account verified and password set successfully',
+        user: {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          username: user.username,
+          avatar: user.avatar,
+          bio: user.bio,
+          isVerified: user.isVerified,
+          isAcceptingMessages: user.isAcceptingMessages,
+          pinnedRooms: user.pinnedRooms,
+        },
       },
     });
   } catch (error) {

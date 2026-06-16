@@ -65,7 +65,7 @@ function Field({
 }
 
 export default function SignupForm() {
-  const [form, setForm] = useState({ name: '', email: '', username: '', password: '' });
+  const [form, setForm] = useState({ name: '', email: '', username: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -136,15 +136,6 @@ export default function SignupForm() {
               fieldError={fieldErrors.email}
             />
 
-            {/* Password */}
-            <Field
-              id="password" label="Password" placeholder="••••••••"
-              value={form.password} loading={loading} onChange={handleChange}
-              fieldError={fieldErrors.password}
-              showPassword={showPassword}
-              onTogglePassword={() => setShowPassword((v) => !v)}
-              hint="Min 8 chars with uppercase, lowercase, number &amp; special character"
-            />
 
             {/* Error */}
             {error && <div className="dm-error-box">{error}</div>}

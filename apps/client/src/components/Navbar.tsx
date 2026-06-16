@@ -44,6 +44,9 @@ export default function Navbar() {
             <Link to="/community" className="dm-btn-ghost" style={{ padding: '8px 16px', fontSize: '13px' }}>
               <Users size={16} /> Community
             </Link>
+            <Link to="/community?tab=friends" className="dm-btn-ghost" style={{ padding: '8px 16px', fontSize: '13px' }}>
+              <Users size={16} /> Friends
+            </Link>
             <Link to="/create-room" className="dm-btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }}>
               <Plus size={16} /> Create
             </Link>
