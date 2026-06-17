@@ -130,16 +130,14 @@ a {
   transition: var(--dm-transition);
   text-decoration: none;
   white-space: nowrap;
-  box-shadow: 4px 4px 0px rgba(255,255,255,0.1);
 }
 .dm-btn-primary:hover {
   background: #000;
   color: var(--dm-accent);
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--dm-accent);
 }
-.dm-btn-primary:active { transform: translateY(0); box-shadow: 2px 2px 0px var(--dm-accent); }
-.dm-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; transform: none; }
+.dm-btn-primary:active { transform: translateY(0); }
+.dm-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
 .dm-btn-ghost {
   display: inline-flex;
@@ -165,9 +163,8 @@ a {
   color: #000;
   border-color: var(--dm-text);
   transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px rgba(255,255,255,0.2);
 }
-.dm-btn-ghost:active { transform: translateY(0); box-shadow: 2px 2px 0px rgba(255,255,255,0.2); }
+.dm-btn-ghost:active { transform: translateY(0); }
 .dm-btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
 .dm-btn-danger {
@@ -186,13 +183,11 @@ a {
   border-radius: var(--dm-radius-sm);
   cursor: pointer;
   transition: var(--dm-transition);
-  box-shadow: 4px 4px 0px rgba(239, 68, 68, 0.4);
 }
 .dm-btn-danger:hover {
   background: #000;
   color: #ef4444;
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px #ef4444;
 }
 
 /* ── Form Elements ── */
@@ -338,14 +333,12 @@ a {
   color: #000 !important;
   background: var(--dm-text) !important;
   transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px rgba(255,255,255,0.2);
 }
 .nsoc-icon-btn:hover {
   color: #000 !important;
   background: var(--dm-text) !important;
   border-color: var(--dm-text) !important;
   transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px rgba(255,255,255,0.2);
 }
 
 /* ── Mobile ── */

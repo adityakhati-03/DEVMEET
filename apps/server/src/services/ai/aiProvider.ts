@@ -1,17 +1,32 @@
 import { env } from '../../config/env';
 import type { AIProvider } from './aiTypes';
 import { GeminiProvider } from './geminiProvider';
+import { GroqProvider } from './groqProvider';
+import { FallbackProvider } from './fallbackProvider';
 import { createError } from '../../middlewares/error.middleware';
 
 export function getAIProvider(): AIProvider {
-  const providerType = env.aiProvider || 'gemini';
-  
-  if (providerType === 'gemini') {
-    if (!env.geminiApiKey) {
-      throw createError('GEMINI_API_KEY is not configured on the server. Please add it to your .env file.', 503, 'AI_NOT_CONFIGURED');
-    }
-    return new GeminiProvider(env.geminiApiKey, env.aiModel || 'gemini-2.0-flash');
+  const providers: AIProvider[] = [];
+
+  // 1. Primary: Gemini
+  if (env.geminiApiKey) {
+    providers.push(new GeminiProvider(env.geminiApiKey, env.aiModel || 'gemini-2.0-flash'));
   }
 
-  throw createError(`Unsupported AI provider: ${providerType}`, 500, 'UNSUPPORTED_AI_PROVIDER');
+  // 2. Fallback 1: Groq
+  if (env.groqApiKey) {
+    // using llama3-70b-8192 as a robust fallback for reasoning/coding
+    providers.push(new GroqProvider(env.groqApiKey, 'llama3-70b-8192')); 
+  }
+
+  if (providers.length === 0) {
+    throw createError(
+      'No AI providers configured. Please set GEMINI_API_KEY or GROQ_API_KEY in your .env file.',
+      503,
+      'AI_NOT_CONFIGURED'
+    );
+  }
+
+  // Wrap all available providers in the fallback logic
+  return new FallbackProvider(providers);
 }

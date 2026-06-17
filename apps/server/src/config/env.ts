@@ -42,6 +42,7 @@ export const env = {
   streamVideoApiSecret: process.env.STREAM_VIDEO_API_SECRET!,
   aiProvider: process.env.AI_PROVIDER || 'gemini',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
+  groqApiKey: process.env.GROQ_API_KEY || '',
   aiModel: process.env.AI_MODEL || '',
   aiMaxTokens: parseInt(process.env.AI_MAX_TOKENS || '2048', 10),
   aiTemperature: parseFloat(process.env.AI_TEMPERATURE || '0.7'),
