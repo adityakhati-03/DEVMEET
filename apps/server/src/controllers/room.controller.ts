@@ -18,7 +18,7 @@ const createRoomSchema = z.object({
 }, { message: "Invalid interviewType for the selected mode" });
 
 // Helper to invalidate room caches
-async function invalidateRoomCache(room: any) {
+export async function invalidateRoomCache(room: any) {
   if (!room) return;
   const keys: string[] = [`room:${room.roomId}`];
   if (room.createdBy) {

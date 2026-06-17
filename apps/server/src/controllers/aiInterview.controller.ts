@@ -6,6 +6,7 @@ import AIInterviewReport from '../models/AIInterviewReport';
 import Room from '../models/Room';
 import { z } from 'zod';
 import { createError } from '../middlewares/error.middleware';
+import { invalidateRoomCache } from './room.controller';
 
 export async function createSession(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -44,6 +45,7 @@ export async function createSession(req: Request, res: Response, next: NextFunct
     room.interviewSessionId = session._id as any;
     if (problemId) room.problemId = problemId;
     await room.save();
+    await invalidateRoomCache(room);
 
     res.status(201).json({ success: true, data: { session } });
   } catch (err) {
@@ -90,6 +92,7 @@ export async function setupSession(req: Request, res: Response, next: NextFuncti
     room.interviewSessionId = session._id as any;
     room.problemId = problem._id as any;
     await room.save();
+    await invalidateRoomCache(room);
 
     res.status(201).json({ success: true, data: { session, problem } });
   } catch (err) {

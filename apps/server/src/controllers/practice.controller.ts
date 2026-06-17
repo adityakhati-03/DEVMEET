@@ -9,6 +9,7 @@ import { practiceService } from '../services/practice.service';
 import { problemService } from '../services/problem.service';
 import { createError } from '../middlewares/error.middleware';
 import { DOCKER_LANGUAGE_MAP, SUPPORTED_LANGUAGES } from '@devmeet/shared';
+import { invalidateRoomCache } from './room.controller';
 
 export async function createPracticeRoom(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -118,6 +119,7 @@ export async function updatePracticeRoomProblem(req: Request, res: Response, nex
     room.problemId = problem._id;
     room.title = problem.title;
     await room.save();
+    await invalidateRoomCache(room);
 
     const problemObj = problem.toObject();
     const safeTestCases = problemObj.testCases.map((tc: any) => tc.hidden ? { input: tc.input, hidden: true } : tc);

@@ -10,6 +10,7 @@ import { interviewService } from '../services/interview.service';
 import { problemService } from '../services/problem.service';
 import { createError } from '../middlewares/error.middleware';
 import { DOCKER_LANGUAGE_MAP, SUPPORTED_LANGUAGES } from '@devmeet/shared';
+import { invalidateRoomCache } from './room.controller';
 
 // -- Utility Authorization checks --
 function isOwnerOrInterviewer(userId: string, session: any) {
@@ -45,6 +46,7 @@ export async function joinSession(req: Request, res: Response, next: NextFunctio
       });
       room.interviewSessionId = session._id as any;
       await room.save();
+      await invalidateRoomCache(room);
 
       await interviewService.logEvent({
         roomId,

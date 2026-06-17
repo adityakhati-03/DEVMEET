@@ -16,6 +16,7 @@ import {
   canViewProblemHiddenData
 } from '../utils/aiProblemAuth';
 import type { JwtPayload } from '../utils/jwt';
+import { invalidateRoomCache } from '../controllers/room.controller';
 import type {
   AIProblemBuilderRequest,
   SaveAIProblemRequest,
@@ -241,6 +242,7 @@ export class AIProblemService {
 
     room.problemId = problem._id;
     await room.save();
+    await invalidateRoomCache(room);
 
     // Sync to session if one exists
     if (session) {
