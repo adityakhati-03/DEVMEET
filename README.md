@@ -62,6 +62,8 @@ DevMeet is an all-in-one developer collaboration platform. It lets developers:
 - **Run code** in isolated Docker containers (sandboxed execution) supporting 9 languages.
 - **Build problems** from scratch using an AI Problem Builder that generates full problem statements, starter code, driver code, and test cases from a topic, a natural language prompt, a pasted statement, or a LeetCode reference.
 - **Explore the community**, find other developers, and send friend requests.
+- **Experience a fluid UI across all devices**, thanks to a mobile-responsive redesign using Tailwind CSS built on top of a brutalist aesthetic.
+- **Enjoy high performance**, with Redis-backed caching and smart invalidation patterns seamlessly integrating AI problems into active rooms in real-time.
 
 ---
 
