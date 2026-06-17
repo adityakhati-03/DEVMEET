@@ -259,13 +259,11 @@ export default function DashboardPage() {
       )}
     </div>
   );
-
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
   return (
-    <div style={{ padding: '40px 40px 80px', maxWidth: '1300px', margin: '0 auto', width: '100%' }}>
-
+    <div className="flex flex-col p-4 md:p-10 bg-[var(--dm-bg)] min-h-screen">
       {/* Welcome */}
       <div style={{ marginBottom: '40px' }}>
         <h1 style={{ fontSize: '26px', fontWeight: 800, color: 'white', margin: 0, letterSpacing: '-0.5px' }}>
@@ -275,7 +273,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats + Create Room */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr) 220px', gap: '16px', marginBottom: '48px' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[repeat(3,1fr)_220px] gap-4 mb-12">
         {[
           { label: 'Hosted Rooms',  value: createdRooms.length, icon: DoorOpen,      accent: 'Active' },
           { label: 'Joined Rooms',  value: joinedRooms.length,  icon: Users,         accent: 'Collaborating' },
@@ -299,8 +297,8 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Main Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '32px', alignItems: 'start' }}>
+      {/* Main Layout (Left Content + Right Sidebar) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 flex-1 items-start">
 
         {/* Left Column */}
         <div>
@@ -309,7 +307,7 @@ export default function DashboardPage() {
             <div style={sectionHead}>
               <span style={sectionTitle}>Quick Actions</span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
               {/* Join Room */}
               <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -369,7 +367,7 @@ export default function DashboardPage() {
                 <PlusCircle style={{ width: '14px', height: '14px' }} /> New Room
               </Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '16px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {createdRooms.length === 0
                 ? <Empty label="You haven't hosted any rooms yet." cta="Create your first room" href="/create-room" />
                 : createdRooms.map(r => <RoomCard key={r._id} room={r} isOwner />)

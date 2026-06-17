@@ -24,12 +24,7 @@ export default function RoomModeSelector({ onClose, onCreate }: RoomModeSelector
       background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
     }}>
-      <div style={{
-        background: 'var(--dm-card)', border: '1px solid var(--dm-border)',
-        borderRadius: '16px', padding: '32px', width: '100%', maxWidth: '600px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-        display: 'flex', flexDirection: 'column', gap: '24px'
-      }}>
+      <div className="bg-[var(--dm-card)] border border-[var(--dm-border)] rounded-2xl p-6 sm:p-8 w-[calc(100%-32px)] max-w-[600px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] flex flex-col gap-6">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0, color: 'white' }}>Create New Room</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#78716c' }}>
@@ -53,7 +48,7 @@ export default function RoomModeSelector({ onClose, onCreate }: RoomModeSelector
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <label style={{ fontSize: '13px', color: '#a8a29e', fontWeight: 600 }}>Select Room Mode</label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Collaboration */}
             <div
               onClick={() => { setMode('collaboration'); setInterviewType(null); }}
@@ -116,7 +111,7 @@ export default function RoomModeSelector({ onClose, onCreate }: RoomModeSelector
         {mode === 'interview' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
              <label style={{ fontSize: '13px', color: '#a8a29e', fontWeight: 600 }}>Select Interview Type</label>
-             <div style={{ display: 'flex', gap: '16px' }}>
+             <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => setInterviewType('normal')}
                   style={{

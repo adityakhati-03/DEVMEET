@@ -181,7 +181,7 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
 
               {method === 'leetcode_style' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', gap: '16px' }}>
+                  <div className="flex flex-col sm:flex-row gap-4">
                     <div style={{ flex: 1 }}>
                       <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Problem Number</label>
                       <input
@@ -218,7 +218,7 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
               )}
 
               {(method === 'topic' || method === 'prompt') && (
-                <div style={{ display: 'flex', gap: '16px' }}>
+                <div className="flex flex-col sm:flex-row gap-4">
                   <div style={{ flex: 1 }}>
                     <label style={{ display: 'block', fontSize: '13px', color: '#9ca3af', marginBottom: '8px', fontWeight: 600, fontFamily: 'monospace', textTransform: 'uppercase' }}>Difficulty</label>
                     <select
