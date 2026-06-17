@@ -21,6 +21,7 @@ import practiceRoutes from './routes/practice.routes';
 import interviewRoutes from './routes/interview.routes';
 import aiInterviewRoutes from './routes/aiInterview.routes';
 import aiProblemRoutes from './routes/aiProblem.routes';
+import presenceRoutes from './routes/presenceRoutes';
 
 // Middlewares
 import { errorHandler } from './middlewares/error.middleware';
@@ -80,6 +81,7 @@ app.use('/api/practice', practiceRoutes);
 app.use('/api/interviews', interviewRoutes);
 app.use('/api/ai-interviews', aiInterviewRoutes);
 app.use('/api/ai-problems', aiProblemRoutes);
+app.use('/api/presence', presenceRoutes);
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────────
 

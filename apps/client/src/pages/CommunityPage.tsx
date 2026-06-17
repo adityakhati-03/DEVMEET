@@ -40,6 +40,8 @@ export default function CommunityPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const [onlineUserIds, setOnlineUserIds] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     if (searchQuery.length < 2) {
       setSearchResults([]);
@@ -58,6 +60,28 @@ export default function CommunityPage() {
     }, 400);
     return () => clearTimeout(timer);
   }, [searchQuery]);
+
+  // Poll presence
+  useEffect(() => {
+    let mounted = true;
+    const pollPresence = async () => {
+      try {
+        const res = await api.get('/api/presence');
+        if (mounted) {
+          const ids = res.data.data.onlineUsers.map((u: any) => u._id);
+          setOnlineUserIds(new Set(ids));
+        }
+      } catch (err) {
+        console.error('Failed to poll presence:', err);
+      }
+    };
+    pollPresence();
+    const intervalId = setInterval(pollPresence, 30000);
+    return () => {
+      mounted = false;
+      clearInterval(intervalId);
+    };
+  }, []);
 
   const [newDiscussionTitle, setNewDiscussionTitle] = useState('');
   const [newDiscussionContent, setNewDiscussionContent] = useState('');
@@ -282,8 +306,13 @@ export default function CommunityPage() {
                     {friends.map(f => {
                       const friend = (f.requester as IUser)._id === user?.id ? f.recipient as IUser : f.requester as IUser;
                       return (
-                        <div key={f._id} className="dm-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                          <div style={{ padding: '4px', background: 'var(--dm-surface)', border: '2px solid var(--dm-border)', borderRadius: '50%' }}>
+                        <div key={f._id} className="dm-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', position: 'relative' }}>
+                          {onlineUserIds.has(friend._id) && (
+                            <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', color: '#34d399', fontWeight: 700 }}>
+                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399' }} /> Online
+                            </div>
+                          )}
+                          <div style={{ padding: '4px', background: 'var(--dm-surface)', border: onlineUserIds.has(friend._id) ? '2px solid #34d399' : '2px solid var(--dm-border)', borderRadius: '50%' }}>
                             <img src={friend.avatar || `https://ui-avatars.com/api/?name=${friend.name}&background=1a1a1a&color=facc15`} alt={friend.name} style={{ width: '80px', height: '80px', borderRadius: '50%' }} />
                           </div>
                           <div style={{ textAlign: 'center' }}>

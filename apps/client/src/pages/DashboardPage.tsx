@@ -56,22 +56,42 @@ export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const [rooms, setRooms]       = useState<IRoom[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<IUser[]>([]);
   const [loading, setLoading]   = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [activeUsers, setActiveUsers] = useState<any[]>([]);
 
   useEffect(() => {
+    if (!user) return;
+    
+    // Fetch rooms
     roomService.getRooms()
       .then(setRooms)
-      .catch((err: any) => {
+      .catch(err => {
+        console.error(err);
         toast.error('Failed to load rooms: ' + (err.response?.data?.error?.message || err.message));
       })
       .finally(() => setLoading(false));
 
-    api.get('/api/users/active')
-      .then(res => setActiveUsers(res.data.data.users))
-      .catch(() => {});
-  }, []);
+    // Poll presence
+    let mounted = true;
+    const pollPresence = async () => {
+      try {
+        const res = await api.get('/api/presence');
+        if (mounted) setOnlineUsers(res.data.data.onlineUsers);
+      } catch (err) {
+        console.error('Failed to poll presence:', err);
+      }
+    };
+    
+    pollPresence(); // initial poll
+    const intervalId = setInterval(pollPresence, 30000); // 30s heartbeat
+
+    return () => {
+      mounted = false;
+      clearInterval(intervalId);
+    };
+  }, [user]);
 
   const userId = user?.id;
   const createdRooms = rooms.filter(r => {
@@ -420,6 +440,38 @@ export default function DashboardPage() {
                 Star a room to pin it here.
               </div>
             )}
+          </div>
+
+          {/* Live Online */}
+          <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ ...sectionTitle, fontSize: '11px' }}>Live Online</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#a1a1aa' }}>
+                <Circle style={{ width: '8px', height: '8px', fill: '#34d399', color: '#34d399' }} /> {onlineUsers.length} Online
+              </span>
+            </div>
+            <div style={{ padding: '8px' }}>
+              {onlineUsers.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {onlineUsers.map(u => (
+                    <div key={u._id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 12px', borderRadius: '8px', background: 'transparent', transition: 'background 0.2s' }} className="nsoc-nav-link">
+                      <div style={{ position: 'relative' }}>
+                        <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=1a1a1a&color=facc15`} alt={u.name} style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid var(--dm-border)' }} />
+                        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '10px', height: '10px', background: '#34d399', borderRadius: '50%', border: '2px solid var(--dm-card)' }}></div>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: '14px', color: 'var(--dm-text)', fontWeight: 600 }}>{u.name} {u._id === user?.id ? '(You)' : ''}</span>
+                        <span style={{ fontSize: '12px', color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace' }}>@{u.username}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ padding: '16px', textAlign: 'center', color: '#78716c', fontSize: '13px' }}>
+                  No one is online right now.
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Quick Tips & FAQ */}
