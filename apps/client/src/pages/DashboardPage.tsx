@@ -5,7 +5,7 @@ import {
   PlusCircle, DoorOpen, Users,
   Star, Clock, TerminalSquare,
   Play, SearchCode, FolderOpen, ArrowRight,
-  Circle, Trash2
+  Circle, Trash2, Copy
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { roomService } from '../services/roomService';
@@ -137,13 +137,22 @@ export default function DashboardPage() {
               <TerminalSquare style={{ width: '18px', height: '18px', color: '#34d399' }} />
             </div>
             <div style={{ minWidth: 0 }}>
-              <p style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '15px', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }} title={room.roomId}>
-                {room.roomId}
+              <p style={{ fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, fontSize: '18px', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0, paddingBottom: '4px' }} title={room.title || room.roomId}>
+                {room.title || room.roomId}
               </p>
-              <p style={{ fontSize: '12px', color: '#78716c', display: 'flex', alignItems: 'center', gap: '4px', margin: '4px 0 0' }}>
-                <Clock style={{ width: '11px', height: '11px' }} />
-                {new Date(room.createdAt).toLocaleDateString()}
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0 0', flexWrap: 'wrap' }}>
+                <span 
+                  onClick={(e) => { e.preventDefault(); navigator.clipboard.writeText(room.roomId); toast.success('Room ID copied!'); }} 
+                  style={{ fontSize: '12px', color: '#a1a1aa', fontFamily: '"JetBrains Mono", monospace', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'pointer', border: '1px solid var(--dm-border)' }} 
+                  title="Click to copy Room ID"
+                >
+                  {room.roomId.substring(0, 8)}... <Copy style={{ width: '12px', height: '12px' }} />
+                </span>
+                <span style={{ fontSize: '12px', color: '#78716c', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Clock style={{ width: '11px', height: '11px' }} />
+                  {new Date(room.createdAt).toLocaleDateString()}
+                </span>
+              </div>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
