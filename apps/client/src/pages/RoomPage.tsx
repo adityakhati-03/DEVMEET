@@ -6,7 +6,7 @@ import { roomService } from '../services/roomService';
 import { streamService } from '../services/streamService';
 import type { IRoom } from '@devmeet/shared';
 import StreamRoomProvider from '../components/roomstructure/StreamRoomProvider';
-import CollaborativeEditor from '../components/editor/CollaborativeEditor';
+import CollabRoomContainer from './CollabRoomContainer';
 import PracticeRoomContainer from './PracticeRoomContainer';
 import NormalInterviewLayout from '../components/interview/NormalInterviewLayout';
 import AIInterviewContainer from './AIInterviewContainer';
@@ -153,25 +153,15 @@ export default function RoomPage() {
     <>
       <RoomFullscreenButton />
       <RoomCopyLinkButton roomId={roomId!} />
-      <CollaborationProvider roomId={roomId!} token={null}>
-        <StreamRoomProvider
-            roomId={roomId!}
-            userId={user.id}
-            userName={user.name}
-            userAvatar={user.avatar ?? undefined}
-            getStreamToken={() => streamService.getStreamToken(roomId)}
-          >
-            <CollaborativeEditor
-              roomId={roomId!}
-              currentUser={{
-                id: user.id,
-                name: user.name,
-                username: user.username,
-                avatar: user.avatar,
-              }}
-            />
-        </StreamRoomProvider>
-      </CollaborationProvider>
+      <CollabRoomContainer 
+        room={room}
+        currentUser={{
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          avatar: user.avatar,
+        }}
+      />
     </>
   );
 }

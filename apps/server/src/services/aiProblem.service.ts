@@ -230,17 +230,23 @@ export class AIProblemService {
     if (!problem) throw Object.assign(new Error('Problem not found'), { code: 'NOT_FOUND' });
 
     // Enforce that AI Interview mode problem cannot be changed after session has started
-    if (room.mode === 'interview' && room.interviewType === 'ai' && room.interviewSessionId) {
-      // Find session to check if started
+    let session = null;
+    if (room.mode === 'interview' && room.interviewSessionId) {
       const mongoose = require('mongoose');
-      const session = await mongoose.model('InterviewSession').findById(room.interviewSessionId);
-      if (session && session.status !== 'scheduled') {
+      session = await mongoose.model('InterviewSession').findById(room.interviewSessionId);
+      if (room.interviewType === 'ai' && session && session.status !== 'scheduled') {
         throw Object.assign(new Error('Cannot change problem after AI interview has started'), { code: 'FORBIDDEN' });
       }
     }
 
     room.problemId = problem._id;
     await room.save();
+
+    // Sync to session if one exists
+    if (session) {
+      session.problemId = problem._id;
+      await session.save();
+    }
 
     return { success: true };
   }

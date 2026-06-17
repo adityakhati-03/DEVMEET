@@ -53,8 +53,9 @@ export default function NormalInterviewLayout({ room, currentUser }: NormalInter
       try {
         const sess = await interviewService.getSession(room.interviewSessionId as string);
         setSession(sess);
-        if (sess.problemId) {
-          const prob = await problemService.getProblem(sess.problemId as string);
+        const activeProblemId = sess.problemId || room.problemId;
+        if (activeProblemId) {
+          const prob = await problemService.getProblem(activeProblemId as string);
           setProblem(prob);
         }
         
@@ -70,6 +71,15 @@ export default function NormalInterviewLayout({ room, currentUser }: NormalInter
     };
     fetchSession();
   }, [room.interviewSessionId]);
+
+  // 1a. Listen for dynamic problem updates on the room
+  useEffect(() => {
+    if (room.problemId) {
+      problemService.getProblem(room.problemId as string)
+        .then(setProblem)
+        .catch(console.error);
+    }
+  }, [room.problemId]);
 
   // 2. Poll Timer Status
   useEffect(() => {
