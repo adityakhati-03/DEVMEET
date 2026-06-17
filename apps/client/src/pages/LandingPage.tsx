@@ -161,6 +161,26 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── FAQ Section ── */}
+      <section className="landing-info-section" style={{ padding: '80px 0', borderTop: '4px solid var(--dm-border)', background: 'var(--dm-surface)' }}>
+        <div className="page-wrapper">
+          <h2 style={{ fontSize: '36px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '40px', textAlign: 'center', letterSpacing: '-0.03em' }}>Frequently Asked Questions</h2>
+          <div className="dm-grid-2">
+            {[
+              { q: 'Is the live online collaboration real-time?', a: 'Yes! DevMeet uses WebSockets (Socket.io) and CRDTs for sub-100ms latency. You can see your teammates\' cursors moving, code executing, and video streaming in absolute real-time.' },
+              { q: 'What programming languages are supported?', a: 'We currently support 9+ languages including JavaScript, TypeScript, Python, Java, C++, Go, and Rust. All code executes securely in isolated cloud containers.' },
+              { q: 'Is there a limit on video call participants?', a: 'DevMeet video calls (powered by Stream) are optimized for small teams, pair programming, and interviews, supporting up to 10 active high-definition participants per room.' },
+              { q: 'How does the AI Problem Builder work?', a: 'Our embedded AI uses state-of-the-art models (like Llama 3.3) to instantly generate technical interview questions, starter code, and robust test cases based on any topic or LeetCode URL you provide.' }
+            ].map((faq, i) => (
+              <div key={i} className="dm-card" style={{ padding: '24px', background: 'var(--dm-bg)' }}>
+                <h3 style={{ fontSize: '18px', fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, color: 'var(--dm-text)', marginBottom: '12px' }}>{faq.q}</h3>
+                <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Footer ── */}
       <footer className="landing-footer">
         <div className="page-wrapper landing-footer-inner">

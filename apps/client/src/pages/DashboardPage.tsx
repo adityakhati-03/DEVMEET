@@ -421,6 +421,27 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
+
+          {/* Quick Tips & FAQ */}
+          <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ ...sectionTitle, fontSize: '11px' }}>Quick Tips & FAQ</span>
+            </div>
+            <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <strong style={{ color: 'white', fontSize: '13px', display: 'block', marginBottom: '4px' }}>How do I invite someone?</strong>
+                <span style={{ color: '#a1a1aa', fontSize: '12px', lineHeight: 1.5, display: 'block' }}>Simply click the Room ID to copy it, then send it to your teammate. They can paste it in "Join via Room ID".</span>
+              </div>
+              <div>
+                <strong style={{ color: 'white', fontSize: '13px', display: 'block', marginBottom: '4px' }}>Are the tools real-time?</strong>
+                <span style={{ color: '#a1a1aa', fontSize: '12px', lineHeight: 1.5, display: 'block' }}>Yes! The code editor, terminal, cursor tracking, and video calls are 100% live and instantaneous.</span>
+              </div>
+              <div>
+                <strong style={{ color: 'white', fontSize: '13px', display: 'block', marginBottom: '4px' }}>How do I practice for interviews?</strong>
+                <span style={{ color: '#a1a1aa', fontSize: '12px', lineHeight: 1.5, display: 'block' }}>Inside any room, use the "Build Problem" button. Our AI will instantly craft a LeetCode-style problem for you.</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
