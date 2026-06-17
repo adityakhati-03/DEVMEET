@@ -15,8 +15,8 @@ export function getAIProvider(): AIProvider {
 
   // 2. Fallback 1: Groq
   if (env.groqApiKey) {
-    // using llama3-70b-8192 as a robust fallback for reasoning/coding
-    providers.push(new GroqProvider(env.groqApiKey, 'llama3-70b-8192')); 
+    // using llama-3.3-70b-versatile as a robust fallback for reasoning/coding
+    providers.push(new GroqProvider(env.groqApiKey, 'llama-3.3-70b-versatile')); 
   }
 
   if (providers.length === 0) {

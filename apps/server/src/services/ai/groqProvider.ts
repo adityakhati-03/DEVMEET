@@ -5,7 +5,7 @@ export class GroqProvider implements AIProvider {
   private client: Groq;
   private model: string;
 
-  constructor(apiKey: string, model: string = 'llama3-8b-8192') {
+  constructor(apiKey: string, model: string = 'llama-3.1-8b-instant') {
     this.client = new Groq({ apiKey });
     this.model = model;
   }
