@@ -100,9 +100,12 @@ export default function CommunityPage() {
       style={{
         display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
         background: activeTab === id ? 'var(--dm-surface)' : 'transparent',
-        border: 'none', borderBottom: activeTab === id ? '2px solid #34d399' : '2px solid transparent',
-        color: activeTab === id ? 'white' : '#94a3b8',
-        fontWeight: 600, fontSize: '15px', cursor: 'pointer', transition: 'all 0.2s'
+        border: 'none', 
+        borderBottom: activeTab === id ? '2px solid var(--dm-accent)' : '2px solid transparent',
+        color: activeTab === id ? 'var(--dm-text)' : 'var(--dm-muted)',
+        fontFamily: '"JetBrains Mono", monospace',
+        textTransform: 'uppercase',
+        fontWeight: 700, fontSize: '14px', cursor: 'pointer', transition: 'var(--dm-transition)'
       }}
     >
       <Icon size={18} /> {label}
@@ -110,12 +113,12 @@ export default function CommunityPage() {
   );
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0d0f14', display: 'flex', flexDirection: 'column' }}>
-      <main style={{ flex: 1, padding: '40px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 800, color: 'white', marginBottom: '8px' }}>Community</h1>
-        <p style={{ color: '#94a3b8', marginBottom: '32px' }}>Connect with developers, join events, and build together.</p>
+    <div style={{ minHeight: '100vh', background: 'var(--dm-bg)', display: 'flex', flexDirection: 'column' }}>
+      <main className="page-wrapper animate-fade-in" style={{ width: '100%' }}>
+        <h1 style={{ fontSize: '32px', fontFamily: '"Space Grotesk", sans-serif', fontWeight: 800, color: 'var(--dm-text)', marginBottom: '8px' }}>Community</h1>
+        <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', marginBottom: '32px' }}>Connect with developers, join events, and build together.</p>
 
-        <div style={{ display: 'flex', borderBottom: '1px solid #1e293b', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid var(--dm-border)', marginBottom: '32px', overflowX: 'auto' }}>
           <TabButton id="discussions" label="Discussions" icon={MessageSquare} />
           <TabButton id="events" label="Events" icon={Calendar} />
           <TabButton id="members" label="Members" icon={Search} />
@@ -129,36 +132,36 @@ export default function CommunityPage() {
             {/* Discussions Tab */}
             {activeTab === 'discussions' && (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '32px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   {discussions.map(d => (
-                    <div key={d._id} style={{ background: '#1e293b', padding: '24px', borderRadius: '12px', border: '1px solid #334155' }}>
-                      <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'white', margin: '0 0 8px 0' }}>{d.title}</h3>
-                      <p style={{ color: '#94a3b8', margin: '0 0 16px 0', fontSize: '14px', lineHeight: 1.5 }}>{d.content}</p>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', color: '#64748b' }}>
-                        <span>By {(d.author as IUser)?.name || 'Unknown'}</span>
+                    <div key={d._id} className="dm-card" style={{ padding: '24px' }}>
+                      <h3 style={{ fontSize: '20px', fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, color: 'var(--dm-text)', margin: '0 0 12px 0' }}>{d.title}</h3>
+                      <p style={{ color: 'var(--dm-muted)', margin: '0 0 20px 0', fontSize: '15px', lineHeight: 1.6 }}>{d.content}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace' }}>
+                        <span style={{ color: 'var(--dm-text)' }}>By {(d.author as IUser)?.name || 'Unknown'}</span>
                         <span>•</span>
                         <span>{new Date(d.createdAt).toLocaleDateString()}</span>
                         <span>•</span>
-                        <span>{d.replies} replies</span>
+                        <span className="dm-badge" style={{ padding: '2px 8px' }}>{d.replies} replies</span>
                       </div>
                     </div>
                   ))}
-                  {discussions.length === 0 && <p style={{ color: '#64748b' }}>No discussions yet. Start one!</p>}
+                  {discussions.length === 0 && <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace' }}>No discussions yet. Start one!</p>}
                 </div>
                 
-                <div style={{ background: '#1e293b', padding: '24px', borderRadius: '12px', border: '1px solid #334155', height: 'fit-content' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'white', margin: '0 0 16px 0' }}>New Discussion</h3>
+                <div className="dm-card" style={{ padding: '24px', height: 'fit-content' }}>
+                  <h3 style={{ fontSize: '18px', fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, color: 'var(--dm-text)', margin: '0 0 20px 0' }}>New Discussion</h3>
                   <form onSubmit={handleCreateDiscussion} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <input 
                       type="text" placeholder="Topic title..." value={newDiscussionTitle} onChange={e => setNewDiscussionTitle(e.target.value)} required
-                      style={{ padding: '10px 14px', borderRadius: '8px', background: '#0f172a', border: '1px solid #334155', color: 'white', outline: 'none' }}
+                      className="dm-input"
                     />
                     <textarea 
-                      placeholder="What's on your mind?" value={newDiscussionContent} onChange={e => setNewDiscussionContent(e.target.value)} required rows={4}
-                      style={{ padding: '10px 14px', borderRadius: '8px', background: '#0f172a', border: '1px solid #334155', color: 'white', outline: 'none', resize: 'vertical' }}
+                      placeholder="What's on your mind?" value={newDiscussionContent} onChange={e => setNewDiscussionContent(e.target.value)} required rows={5}
+                      className="dm-input" style={{ resize: 'vertical' }}
                     />
-                    <button type="submit" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#34d399', color: '#0f172a', padding: '10px', borderRadius: '8px', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
-                      <PlusCircle size={16} /> Post
+                    <button type="submit" className="dm-btn-primary" style={{ width: '100%' }}>
+                      <PlusCircle size={18} /> Post
                     </button>
                   </form>
                 </div>
@@ -167,37 +170,39 @@ export default function CommunityPage() {
 
             {/* Events Tab */}
             {activeTab === 'events' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+              <div className="dm-grid-3">
                 {events.map(e => (
-                  <div key={e._id} style={{ background: '#1e293b', padding: '24px', borderRadius: '12px', border: '1px solid #334155' }}>
+                  <div key={e._id} className="dm-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                      <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'white', margin: 0 }}>{e.title}</h3>
-                      <span style={{ background: 'rgba(52,211,153,0.1)', color: '#34d399', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>{e.category}</span>
+                      <h3 style={{ fontSize: '20px', fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, color: 'var(--dm-text)', margin: 0 }}>{e.title}</h3>
+                      <span className="dm-badge">{e.category}</span>
                     </div>
-                    <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '16px', minHeight: '40px' }}>{e.description}</p>
-                    <div style={{ fontSize: '13px', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Calendar size={14} /> {e.date} at {e.time}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Users size={14} /> {e.attendees?.length || 0} attending</div>
+                    <p style={{ color: 'var(--dm-muted)', fontSize: '15px', marginBottom: '24px', flex: 1 }}>{e.description}</p>
+                    <div style={{ fontSize: '13px', color: 'var(--dm-text)', fontFamily: '"JetBrains Mono", monospace', display: 'flex', flexDirection: 'column', gap: '8px', background: 'var(--dm-surface)', padding: '12px', borderRadius: 'var(--dm-radius-sm)', border: '1px solid var(--dm-border)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Calendar size={16} color="var(--dm-accent)" /> {e.date} at {e.time}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Users size={16} color="var(--dm-accent)" /> {e.attendees?.length || 0} attending</div>
                     </div>
                   </div>
                 ))}
-                {events.length === 0 && <p style={{ color: '#64748b' }}>No upcoming events.</p>}
+                {events.length === 0 && <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', gridColumn: '1 / -1' }}>No upcoming events.</p>}
               </div>
             )}
 
             {/* Members Tab */}
             {activeTab === 'members' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
+              <div className="dm-grid-4">
                 {members.map(m => (
-                  <div key={m._id} style={{ background: '#1e293b', padding: '20px', borderRadius: '12px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                    <img src={m.avatar || `https://ui-avatars.com/api/?name=${m.name}&background=0f172a&color=34d399`} alt={m.name} style={{ width: '64px', height: '64px', borderRadius: '50%' }} />
+                  <div key={m._id} className="dm-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ padding: '4px', background: 'var(--dm-surface)', border: '2px solid var(--dm-border)', borderRadius: '50%' }}>
+                      <img src={m.avatar || `https://ui-avatars.com/api/?name=${m.name}&background=1a1a1a&color=facc15`} alt={m.name} style={{ width: '80px', height: '80px', borderRadius: '50%' }} />
+                    </div>
                     <div style={{ textAlign: 'center' }}>
-                      <h4 style={{ color: 'white', fontWeight: 600, margin: '0 0 4px 0' }}>{m.name}</h4>
-                      <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>@{m.username}</p>
+                      <h4 style={{ color: 'var(--dm-text)', fontFamily: '"Space Grotesk", sans-serif', fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0' }}>{m.name}</h4>
+                      <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', margin: 0 }}>@{m.username}</p>
                     </div>
                     {m._id !== user?.id && (
-                      <button onClick={() => handleSendFriendRequest(m._id)} style={{ background: 'rgba(52,211,153,0.1)', color: '#34d399', border: '1px solid rgba(52,211,153,0.2)', padding: '6px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <UserPlus size={14} /> Add Friend
+                      <button onClick={() => handleSendFriendRequest(m._id)} className="dm-btn-ghost" style={{ width: '100%', marginTop: 'auto' }}>
+                        <UserPlus size={16} /> Add Friend
                       </button>
                     )}
                   </div>
@@ -207,61 +212,62 @@ export default function CommunityPage() {
 
             {/* Friends Tab */}
             {activeTab === 'friends' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                <div style={{ background: '#1e293b', padding: '24px', borderRadius: '12px', border: '1px solid #334155' }}>
-                  <h3 style={{ fontSize: '18px', color: 'white', margin: '0 0 16px 0' }}>Find Friends</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+                <div className="dm-card" style={{ padding: '32px' }}>
+                  <h3 style={{ fontSize: '24px', fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, color: 'var(--dm-text)', margin: '0 0 20px 0' }}>Find Friends</h3>
                   <div style={{ position: 'relative' }}>
-                    <Search style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} size={18} />
+                    <Search style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--dm-muted)' }} size={20} />
                     <input 
                       type="text" 
                       placeholder="Search by name or @username..." 
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
-                      style={{ width: '100%', padding: '12px 16px 12px 42px', borderRadius: '8px', background: '#0f172a', border: '1px solid #334155', color: 'white', outline: 'none' }}
+                      className="dm-input"
+                      style={{ paddingLeft: '48px', fontSize: '16px' }}
                     />
                   </div>
-                  {isSearching && <p style={{ color: '#64748b', fontSize: '13px', marginTop: '12px' }}>Searching...</p>}
+                  {isSearching && <p style={{ color: 'var(--dm-accent)', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', marginTop: '16px' }}>Searching database...</p>}
                   {searchResults.length > 0 && (
-                    <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {searchResults.map(u => (
-                        <div key={u._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', background: '#0f172a', borderRadius: '8px', border: '1px solid #334155' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=1e293b&color=34d399`} alt={u.name} style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
+                        <div key={u._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'var(--dm-surface)', borderRadius: 'var(--dm-radius-sm)', border: '2px solid var(--dm-border)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=111111&color=facc15`} alt={u.name} style={{ width: '48px', height: '48px', borderRadius: '50%', border: '1px solid var(--dm-border)' }} />
                             <div>
-                              <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 2px 0' }}>{u.name}</h4>
-                              <p style={{ color: '#64748b', fontSize: '12px', margin: 0 }}>@{u.username}</p>
+                              <h4 style={{ color: 'var(--dm-text)', fontFamily: '"Space Grotesk", sans-serif', fontSize: '16px', fontWeight: 700, margin: '0 0 4px 0' }}>{u.name}</h4>
+                              <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', margin: 0 }}>@{u.username}</p>
                             </div>
                           </div>
-                          <button onClick={() => handleSendFriendRequest(u._id)} style={{ background: 'rgba(52,211,153,0.1)', color: '#34d399', border: '1px solid rgba(52,211,153,0.2)', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <UserPlus size={14} /> Add
+                          <button onClick={() => handleSendFriendRequest(u._id)} className="dm-btn-ghost">
+                            <UserPlus size={16} /> Add
                           </button>
                         </div>
                       ))}
                     </div>
                   )}
                   {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
-                    <p style={{ color: '#64748b', fontSize: '13px', marginTop: '12px' }}>No users found.</p>
+                    <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', marginTop: '16px' }}>No users found matching "{searchQuery}".</p>
                   )}
                 </div>
 
                 {friendRequests.length > 0 && (
                   <div>
-                    <h3 style={{ fontSize: '18px', color: 'white', marginBottom: '16px' }}>Pending Requests ({friendRequests.length})</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <h3 style={{ fontSize: '24px', fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, color: 'var(--dm-text)', marginBottom: '24px' }}>Pending Requests ({friendRequests.length})</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                       {friendRequests.map(req => {
                         const requester = req.requester as IUser;
                         return (
-                          <div key={req._id} style={{ background: '#1e293b', padding: '16px', borderRadius: '12px', border: '1px solid #334155', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                              <img src={requester.avatar || `https://ui-avatars.com/api/?name=${requester.name}&background=0f172a&color=34d399`} alt={requester.name} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+                          <div key={req._id} className="dm-card" style={{ padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                              <img src={requester.avatar || `https://ui-avatars.com/api/?name=${requester.name}&background=1a1a1a&color=facc15`} alt={requester.name} style={{ width: '56px', height: '56px', borderRadius: '50%', border: '2px solid var(--dm-border)' }} />
                               <div>
-                                <h4 style={{ color: 'white', margin: '0 0 4px 0', fontSize: '15px' }}>{requester.name}</h4>
-                                <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>@{requester.username}</p>
+                                <h4 style={{ color: 'var(--dm-text)', fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, margin: '0 0 4px 0', fontSize: '18px' }}>{requester.name}</h4>
+                                <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', fontSize: '14px', margin: 0 }}>@{requester.username}</p>
                               </div>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                              <button onClick={() => handleRespondRequest(req._id, 'accepted')} style={{ background: '#34d399', color: '#0f172a', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', fontWeight: 600 }}><Check size={14} /> Accept</button>
-                              <button onClick={() => handleRespondRequest(req._id, 'declined')} style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', fontWeight: 600 }}><X size={14} /> Decline</button>
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                              <button onClick={() => handleRespondRequest(req._id, 'accepted')} className="dm-btn-primary"><Check size={16} /> Accept</button>
+                              <button onClick={() => handleRespondRequest(req._id, 'declined')} className="dm-btn-danger"><X size={16} /> Decline</button>
                             </div>
                           </div>
                         );
@@ -271,21 +277,23 @@ export default function CommunityPage() {
                 )}
 
                 <div>
-                  <h3 style={{ fontSize: '18px', color: 'white', marginBottom: '16px' }}>My Friends ({friends.length})</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
+                  <h3 style={{ fontSize: '24px', fontFamily: '"Space Grotesk", sans-serif', fontWeight: 700, color: 'var(--dm-text)', marginBottom: '24px' }}>My Friends ({friends.length})</h3>
+                  <div className="dm-grid-4">
                     {friends.map(f => {
                       const friend = (f.requester as IUser)._id === user?.id ? f.recipient as IUser : f.requester as IUser;
                       return (
-                        <div key={f._id} style={{ background: '#1e293b', padding: '20px', borderRadius: '12px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                          <img src={friend.avatar || `https://ui-avatars.com/api/?name=${friend.name}&background=0f172a&color=34d399`} alt={friend.name} style={{ width: '64px', height: '64px', borderRadius: '50%' }} />
+                        <div key={f._id} className="dm-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                          <div style={{ padding: '4px', background: 'var(--dm-surface)', border: '2px solid var(--dm-border)', borderRadius: '50%' }}>
+                            <img src={friend.avatar || `https://ui-avatars.com/api/?name=${friend.name}&background=1a1a1a&color=facc15`} alt={friend.name} style={{ width: '80px', height: '80px', borderRadius: '50%' }} />
+                          </div>
                           <div style={{ textAlign: 'center' }}>
-                            <h4 style={{ color: 'white', fontWeight: 600, margin: '0 0 4px 0' }}>{friend.name}</h4>
-                            <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>@{friend.username}</p>
+                            <h4 style={{ color: 'var(--dm-text)', fontFamily: '"Space Grotesk", sans-serif', fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0' }}>{friend.name}</h4>
+                            <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', margin: 0 }}>@{friend.username}</p>
                           </div>
                         </div>
                       );
                     })}
-                    {friends.length === 0 && <p style={{ color: '#64748b' }}>You haven't added any friends yet.</p>}
+                    {friends.length === 0 && <p style={{ color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace', gridColumn: '1 / -1' }}>You haven't added any friends yet. Use the search above!</p>}
                   </div>
                 </div>
               </div>
@@ -296,3 +304,4 @@ export default function CommunityPage() {
     </div>
   );
 }
+
