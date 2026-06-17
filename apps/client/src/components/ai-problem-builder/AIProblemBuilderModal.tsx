@@ -96,8 +96,11 @@ export default function AIProblemBuilderModal({ roomId, mode, interviewType, onC
       }
       onClose();
       if (roomId) {
-        // Always navigate to the room — handles both "already in room" and "on dashboard" cases
-        window.location.href = `/rooms/${roomId}`;
+        if (window.location.pathname.includes(`/rooms/${roomId}`)) {
+          window.dispatchEvent(new Event('roomProblemUpdated'));
+        } else {
+          window.location.href = `/rooms/${roomId}`;
+        }
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to save problem');
