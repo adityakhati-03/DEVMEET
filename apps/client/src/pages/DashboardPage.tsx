@@ -5,7 +5,7 @@ import {
   PlusCircle, DoorOpen, Users,
   Star, Clock, TerminalSquare,
   Play, SearchCode, FolderOpen, ArrowRight,
-  Circle, Trash2, Copy
+  Circle, Trash2, Copy, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { roomService } from '../services/roomService';
@@ -143,6 +143,27 @@ export default function DashboardPage() {
       </div>
     );
   }
+
+  /* ── FAQ Component ── */
+  const FAQItem = ({ q, a }: { q: string, a: string }) => {
+    const [open, setOpen] = useState(false);
+    return (
+      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', padding: '16px 0' }}>
+        <button 
+          onClick={() => setOpen(!open)} 
+          style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'none', border: 'none', color: 'white', fontSize: '15px', fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left' }}
+        >
+          {q}
+          {open ? <ChevronUp style={{ width: '16px', height: '16px', color: '#34d399' }} /> : <ChevronDown style={{ width: '16px', height: '16px', color: '#78716c' }} />}
+        </button>
+        {open && (
+          <div style={{ padding: '12px 0 0', color: '#a1a1aa', fontSize: '14px', lineHeight: 1.6 }}>
+            {a}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   /* ── Room Card ── */
   const RoomCard = ({ room, isOwner }: { room: IRoom; isOwner: boolean }) => {
@@ -381,18 +402,30 @@ export default function DashboardPage() {
           <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ ...sectionTitle, fontSize: '11px' }}>Online Now</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#34d399', fontWeight: 700 }}>
-                <Circle style={{ width: '7px', height: '7px', fill: '#34d399', color: '#34d399' }} /> {activeUsers.length} Active
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#34d399', fontWeight: 700 }}>
+                <Circle style={{ width: '8px', height: '8px', fill: '#34d399', color: '#34d399' }} /> {onlineUsers.length} Online
               </span>
             </div>
             <div style={{ padding: '8px' }}>
-              {activeUsers.length > 0 ? activeUsers.map(u => (
-                <div key={u._id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 12px' }}>
-                  <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=12141a&color=34d399`} style={{ width: '28px', height: '28px', borderRadius: '50%' }} alt={u.name} />
-                  <span style={{ fontSize: '13px', color: '#e2e8f0' }}>{u.name}</span>
+              {onlineUsers.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {onlineUsers.map(u => (
+                    <div key={u._id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 12px', borderRadius: '8px', background: 'transparent', transition: 'background 0.2s' }} className="nsoc-nav-link">
+                      <div style={{ position: 'relative' }}>
+                        <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=1a1a1a&color=34d399`} alt={u.name} style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid var(--dm-border)' }} />
+                        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '10px', height: '10px', background: '#34d399', borderRadius: '50%', border: '2px solid var(--dm-card)' }}></div>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: '14px', color: 'var(--dm-text)', fontWeight: 600 }}>{u.name} {u._id === user?.id ? '(You)' : ''}</span>
+                        <span style={{ fontSize: '12px', color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace' }}>@{u.username}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )) : (
-                <div style={{ padding: '16px', textAlign: 'center', color: '#78716c', fontSize: '13px' }}>No users online right now.</div>
+              ) : (
+                <div style={{ padding: '16px', textAlign: 'center', color: '#78716c', fontSize: '13px' }}>
+                  No one is online right now.
+                </div>
               )}
             </div>
           </div>
@@ -442,58 +475,19 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Live Online */}
-          <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ ...sectionTitle, fontSize: '11px' }}>Live Online</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#a1a1aa' }}>
-                <Circle style={{ width: '8px', height: '8px', fill: '#34d399', color: '#34d399' }} /> {onlineUsers.length} Online
-              </span>
-            </div>
-            <div style={{ padding: '8px' }}>
-              {onlineUsers.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  {onlineUsers.map(u => (
-                    <div key={u._id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 12px', borderRadius: '8px', background: 'transparent', transition: 'background 0.2s' }} className="nsoc-nav-link">
-                      <div style={{ position: 'relative' }}>
-                        <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.name}&background=1a1a1a&color=facc15`} alt={u.name} style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid var(--dm-border)' }} />
-                        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '10px', height: '10px', background: '#34d399', borderRadius: '50%', border: '2px solid var(--dm-card)' }}></div>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: '14px', color: 'var(--dm-text)', fontWeight: 600 }}>{u.name} {u._id === user?.id ? '(You)' : ''}</span>
-                        <span style={{ fontSize: '12px', color: 'var(--dm-muted)', fontFamily: '"JetBrains Mono", monospace' }}>@{u.username}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ padding: '16px', textAlign: 'center', color: '#78716c', fontSize: '13px' }}>
-                  No one is online right now.
-                </div>
-              )}
-            </div>
-          </div>
+        </div>
+      </div>
 
-          {/* Quick Tips & FAQ */}
-          <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <span style={{ ...sectionTitle, fontSize: '11px' }}>Quick Tips & FAQ</span>
-            </div>
-            <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <strong style={{ color: 'white', fontSize: '13px', display: 'block', marginBottom: '4px' }}>How do I invite someone?</strong>
-                <span style={{ color: '#a1a1aa', fontSize: '12px', lineHeight: 1.5, display: 'block' }}>Simply click the Room ID to copy it, then send it to your teammate. They can paste it in "Join via Room ID".</span>
-              </div>
-              <div>
-                <strong style={{ color: 'white', fontSize: '13px', display: 'block', marginBottom: '4px' }}>Are the tools real-time?</strong>
-                <span style={{ color: '#a1a1aa', fontSize: '12px', lineHeight: 1.5, display: 'block' }}>Yes! The code editor, terminal, cursor tracking, and video calls are 100% live and instantaneous.</span>
-              </div>
-              <div>
-                <strong style={{ color: 'white', fontSize: '13px', display: 'block', marginBottom: '4px' }}>How do I practice for interviews?</strong>
-                <span style={{ color: '#a1a1aa', fontSize: '12px', lineHeight: 1.5, display: 'block' }}>Inside any room, use the "Build Problem" button. Our AI will instantly craft a LeetCode-style problem for you.</span>
-              </div>
-            </div>
-          </div>
+      {/* Frequently Asked Questions */}
+      <div style={{ marginTop: '64px', maxWidth: '800px', margin: '64px auto 0' }}>
+        <div style={{ ...sectionHead, justifyContent: 'center', marginBottom: '32px' }}>
+          <span style={{ ...sectionTitle, fontSize: '24px' }}>Frequently Asked Questions</span>
+        </div>
+        <div style={{ ...card, padding: '24px 32px' }}>
+          <FAQItem q="How do I invite someone?" a="Simply click the Room ID to copy it, then send it to your teammate. They can paste it in 'Join via Room ID'." />
+          <FAQItem q="Are the tools real-time?" a="Yes! The code editor, terminal, cursor tracking, and video calls are 100% live and instantaneous." />
+          <FAQItem q="How do I practice for interviews?" a="Inside any room, use the 'Build Problem' button. Our AI will instantly craft a LeetCode-style problem for you." />
+          <FAQItem q="Is this suitable for technical interviews?" a="Absolutely! You can choose between Normal interviews and our brand-new autonomous AI interview modes." />
         </div>
       </div>
     </div>

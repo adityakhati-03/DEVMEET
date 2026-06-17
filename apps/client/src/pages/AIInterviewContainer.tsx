@@ -34,12 +34,16 @@ export default function AIInterviewContainer({ room }: AIInterviewContainerProps
   };
 
   useEffect(() => {
-    if (room.problemId) {
+    if (room.problemId && room.interviewSessionId) {
       fetchProblem(room.problemId as string);
+    } else if (room.problemId && !room.interviewSessionId) {
+      aiInterviewService.createSession({ roomId: room.roomId, problemId: room.problemId as string, durationMinutes: 45 })
+        .then(() => window.dispatchEvent(new Event('roomProblemUpdated')))
+        .catch(err => { setError(err.message); setLoading(false); });
     } else {
       setLoading(false);
     }
-  }, [room.problemId]);
+  }, [room.problemId, room.interviewSessionId]);
 
   if (loading) return <div style={{ color: 'white', padding: '24px', display: 'flex', justifyContent: 'center', height: '100vh', alignItems: 'center' }}>Loading AI Interview...</div>;
   if (error) return (
